@@ -1,0 +1,230 @@
+@layer reset, base, components, utilities;
+:root {
+	/* Colors - モダン・洗練されたトーン */
+	--color-primary: hsl(220, 86%, 71%);
+	--color-success: hsl(160, 54%, 67%);
+	--color-danger: hsl(4, 62%, 67%);
+	--color-text: hsl(220, 15%, 20%);
+	--color-text-muted: hsl(220, 8%, 50%);
+	--color-border: hsl(220, 15%, 88%);
+	--color-bg-muted: hsla(220, 15%, 50%, 0.08);
+	--color-bg-muted-hover: hsla(220, 15%, 50%, 0.14);
+	--color-backdrop: hsla(220, 25%, 10%, 0.45);
+
+	/* Font Size */
+	--font-size-base: 14px;
+	--font-size-sm: 0.8em;
+	--font-size-md: 1em;
+
+	/* Spacing */
+	--spacing-xs: 0.25rem;
+	--spacing-sm: 0.5rem;
+	--spacing-md: 1rem;
+	--spacing-lg: 1.5rem;
+
+	/* Border Radius */
+	--radius: 10px;
+}
+
+@layer reset {
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
+
+	:where(ul, ol) {
+		list-style: none;
+	}
+
+	button {
+		all: unset;
+		cursor: pointer;
+	}
+}
+
+:where(input, select, textarea) {
+	font-size: var(--font-size-sm);
+	padding: var(--spacing-sm) var(--spacing-md);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius);
+	&:focus {
+		outline: none;
+	}
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	font-size: var(--font-size-base);
+	line-height: 1.5;
+	color: var(--color-text);
+}
+
+[data-iconBefore] {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	&::before {
+		font-family: 'Material Symbols Outlined';
+		content: attr(data-iconBefore);
+		display: grid;
+		place-items: center;
+		width: 20px;
+		/* height: 20px; */
+	}
+}
+
+.icon {
+	&::before {
+		font-family: 'Material Symbols Outlined';
+		content: attr(data-icon);
+		width: 40px;
+		aspect-ratio: 1/1;
+		display: grid;
+		place-items: center;
+	}
+}
+
+.container {
+	padding: var(--spacing-sm);
+}
+
+.btn {
+	padding: var(--spacing-sm) var(--spacing-md);
+	border-radius: var(--radius);
+	background-color: var(--color-primary);
+	color: #fff;
+}
+
+.submit {
+	background-color: var(--color-success);
+}
+
+.close {
+	background-color: var(--color-danger);
+}
+
+/* dialog */
+dialog {
+	position: relative;
+	&:open {
+		position: fixed;
+		top: 100px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80%;
+		border-radius: var(--radius);
+		border: 1px solid var(--color-border);
+		background-color: #fff;
+		padding: var(--spacing-md);
+		max-height: calc(100vh - 150px);
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+	&::backdrop {
+		background-color: var(--color-backdrop);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+	}
+}
+
+/* 必須チェック */
+label:has(:required) > span::before {
+	content: ' *';
+	color: var(--color-danger);
+	width: 5px;
+}
+
+label:not(:has(:required)) > span::before {
+	content: ' ';
+	width: 5px;
+}
+
+/* チェックボックス */
+input[type='checkbox'] {
+	display: none;
+}
+.checkbox.btn:has(input[type='checkbox']) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--spacing-xs);
+	background-color: var(--color-primary);
+	color: #fff;
+	padding: 0.25em 1em;
+	border-radius: var(--radius);
+	background-color: var(--color-border);
+	&.isGrouped, &.isActive {
+		background-color: var(--color-primary);
+	}
+}
+
+/* エラー表示 */
+[data-errMsg='true'] {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	&::after {
+		content: 'エラーメッセージ';
+		color: var(--color-danger);
+		margin-right: var(--spacing-xs);
+	}
+}
+
+/* 成功表示 */
+[data-errMsg=''] {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	&::after {
+		font-family: 'Material Symbols Outlined';
+		content: 'check';
+		color: var(--color-success);
+		font-size: 1em;
+	}
+}
+
+details {
+	& summary {
+		display: flex;
+		justify-content: space-between;
+
+		&:focus {
+			outline: none;
+		}
+
+		&::after {
+			font-family: 'Material Symbols Outlined';
+			content: 'arrows_more_down';
+			transition: transform 0.3s;
+		}
+	}
+
+	&[open] summary {
+		border-bottom: 1px solid var(--color-border);
+		padding: var(--spacing-sm);
+	}
+	&[open] summary::after {
+		transform: rotate(180deg);
+	}
+}
+
+input[type='file'] {
+	background-color: transparent;
+	padding: 0;
+	border: none;
+	&::file-selector-button {
+		background-color: var(--color-primary);
+		color: #fff;
+		border: none;
+		border-radius: var(--radius);
+		padding: var(--spacing-sm) var(--spacing-md);
+		cursor: pointer;
+	}
+}
