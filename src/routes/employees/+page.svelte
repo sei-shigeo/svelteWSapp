@@ -17,8 +17,6 @@
 	// 在職中のオン/オフ
 	let isActive = $state(true);
 
-	// 編集モーダルの開閉状態
-	let isEditModalOpen = $state(false);
 </script>
 
 <div>

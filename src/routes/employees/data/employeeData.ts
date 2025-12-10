@@ -25,7 +25,6 @@ export type Employee = {
 	postalCode?: string;
 	address?: string;
 	isActive: boolean;
-	isEditModalOpen?: boolean;
 };
 
 export const employeeData: Employee[] = [

@@ -7,7 +7,7 @@
 
 <div class="employees-card-list">
 	{#each employees as employee}
-		<button class="card" onclick={() => (employee.isEditModalOpen = true)}>
+		<a href={`/employees/details/${employee.id}`} target="_blank" class="card">
 			<img src={employee.image || defaultAvatar} alt="従業員画像" />
 			<div class="card-content">
 				<p data-iconBefore="id_card">{employee.code}</p>
@@ -15,7 +15,7 @@
 				<p data-iconBefore="phone">{employee.phone}</p>
 				<p data-iconBefore="email">{employee.email}</p>
 			</div>
-		</button>
+		</a>
 	{/each}
 </div>
 
