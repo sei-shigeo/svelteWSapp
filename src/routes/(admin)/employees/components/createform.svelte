@@ -55,8 +55,7 @@
 		overflow: auto;
 
 		& .main-content {
-			display: grid;
-			grid-template-columns: 150px 1fr;
+			display: flex;
 			gap: var(--spacing-md);
 			overflow-y: auto;
 			flex: 1;
@@ -64,6 +63,7 @@
 
 			& .main-form {
 				display: flex;
+				flex: 1;
 				flex-direction: column;
 				gap: var(--spacing-md);
 			}

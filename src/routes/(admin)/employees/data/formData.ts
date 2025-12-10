@@ -19,7 +19,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '従業員ID',
 		type: 'text',
 		name: 'employee_id',
-		placeholder: '従業員ID'
+		placeholder: '従業員ID',
 	},
 	{
 		formType: 'select',

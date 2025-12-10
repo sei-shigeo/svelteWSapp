@@ -13,7 +13,7 @@
 	};
 </script>
 
-<div class="image-container">
+<div class="image-container" style:grid-area='img'>
 	<label for="image">画像</label>
 	<input type="file" name="image" id="image" style="display: none;" onchange={imageChangeHandler} />
 	<img class="employee-image" src={employeeImageSrc} alt="従業員画像" />

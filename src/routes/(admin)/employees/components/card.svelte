@@ -7,7 +7,7 @@
 
 <div class="employees-card-list">
 	{#each employees as employee}
-		<a href={`/employees/details/${employee.id}`} target="_blank" class="card">
+		<a href={`/employees/${employee.id}`} class="card">
 			<img src={employee.image || defaultAvatar} alt="従業員画像" />
 			<div class="card-content">
 				<p data-iconBefore="id_card">{employee.code}</p>
@@ -22,7 +22,7 @@
 <style>
 	.employees-card-list {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: var(--spacing-sm);
 	}
 	.card {

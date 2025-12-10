@@ -1,6 +1,7 @@
 @layer reset, base, components, utilities;
 :root {
 	/* Colors - モダン・洗練されたトーン */
+	--color-white: #fff;
 	--color-primary: hsl(220, 86%, 71%);
 	--color-success: hsl(160, 54%, 67%);
 	--color-danger: hsl(4, 62%, 67%);
@@ -63,6 +64,7 @@ body {
 	font-size: var(--font-size-base);
 	line-height: 1.5;
 	color: var(--color-text);
+	background-color: var(--color-white);
 }
 
 [data-iconBefore] {
