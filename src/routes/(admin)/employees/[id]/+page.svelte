@@ -52,7 +52,7 @@
 	<div class="header">
 		<h1>従業員詳細</h1>
 		<div class="button-group">
-			<a href={`/employees/print/${employee.id}`} class="btn">印刷</a>
+			<a href={`/employees/${employee.id}/print`} class="btn">印刷</a>
 			<button class="btn" onclick={() => (isEditing = !isEditing)}>{isEditing ? '編集' : '保存'}</button>
 			<button class="btn">削除</button>
 		</div>
