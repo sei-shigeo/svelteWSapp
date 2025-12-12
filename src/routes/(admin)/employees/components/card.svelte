@@ -7,12 +7,12 @@
 
 <div class="employees-card-list">
 	{#each employees as employee}
-		<a href={`/employees/${employee.id}`} class="card">
+		<a href={`/employees/details/${employee.id}`} class="card">
 			<img src={employee.image || defaultAvatar} alt="従業員画像" />
 			<div class="card-content">
 				<p data-iconBefore="id_card">{employee.code}</p>
 				<p data-iconBefore="person">{employee.firstName} {employee.lastName}</p>
-				<p data-iconBefore="phone">{employee.phone}</p>
+				<p data-iconBefore="phone">{employee.phone_mobile}</p>
 				<p data-iconBefore="email">{employee.email}</p>
 			</div>
 		</a>

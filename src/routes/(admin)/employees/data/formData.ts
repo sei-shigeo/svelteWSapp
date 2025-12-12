@@ -9,6 +9,7 @@ export type FieldConfig = {
 	value?: string;
 	required?: boolean;
 	options?: { value: string; label: string; selected?: boolean }[];
+	section?: string; // サブセクション名（雇用情報などで使用）
 };
 // 従業員情報
 export const employeeInfoData: FieldConfig[] = [
@@ -19,7 +20,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '従業員ID',
 		type: 'text',
 		name: 'employee_id',
-		placeholder: '従業員ID',
+		placeholder: '従業員ID'
 	},
 	{
 		formType: 'select',
@@ -125,12 +126,21 @@ export const employeeInfoData: FieldConfig[] = [
 	},
 	{
 		formType: 'input',
-		className: 'phone',
-		areaName: 'phone',
-		label: '電話番号',
+		className: 'phone_mobile',
+		areaName: 'phone_mobile',
+		label: '携帯電話',
 		type: 'text',
-		name: 'phone',
-		placeholder: '電話番号'
+		name: 'phone_mobile',
+		placeholder: '携帯電話'
+	},
+	{
+		formType: 'input',
+		className: 'phone_tel',
+		areaName: 'phone_tel',
+		label: '固定電話',
+		type: 'text',
+		name: 'phone_tel',
+		placeholder: '固定電話'
 	},
 	{
 		formType: 'input',
@@ -158,6 +168,27 @@ export const employeeInfoData: FieldConfig[] = [
 		type: 'text',
 		name: 'address',
 		placeholder: '住所'
+	},
+	{
+		formType: 'select',
+		className: 'role',
+		areaName: 'role',
+		label: 'ロール',
+		type: 'select',
+		name: 'role_id',
+		options: [
+			{ value: '1', label: '管理者', selected: true },
+			{ value: '2', label: '一般' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'image_at',
+		areaName: 'image_at',
+		label: '撮影日',
+		type: 'date',
+		name: 'image_at',
+		placeholder: '撮影日'
 	}
 ];
 // 緊急連絡先
@@ -216,6 +247,7 @@ export const emergencyContactData: FieldConfig[] = [
 ];
 // 雇用情報
 export const employmentInfoData: FieldConfig[] = [
+	// 雇用情報セクション
 	{
 		formType: 'select',
 		className: 'employment_type',
@@ -223,6 +255,7 @@ export const employmentInfoData: FieldConfig[] = [
 		label: '雇用形態',
 		type: 'select',
 		name: 'employment_type_id',
+		section: '雇用情報',
 		options: [
 			{ value: '1', label: '正社員', selected: true },
 			{ value: '2', label: '非正社員' },
@@ -237,6 +270,7 @@ export const employmentInfoData: FieldConfig[] = [
 		label: '部署',
 		type: 'select',
 		name: 'department_id',
+		section: '雇用情報',
 		options: [
 			{ value: '1', label: '総務部', selected: true },
 			{ value: '2', label: '人事部' },
@@ -251,6 +285,7 @@ export const employmentInfoData: FieldConfig[] = [
 		label: '役職',
 		type: 'select',
 		name: 'position_id',
+		section: '雇用情報',
 		options: [
 			{ value: '1', label: '社長', selected: true },
 			{ value: '2', label: '部長' },
@@ -265,8 +300,41 @@ export const employmentInfoData: FieldConfig[] = [
 		label: '入社日',
 		type: 'date',
 		name: 'hire_date',
+		section: '雇用情報',
 		placeholder: '入社日'
 	},
+	// 解任情報セクション
+	{
+		formType: 'input',
+		className: 'appointment_at',
+		areaName: 'appointment_at',
+		label: '選任日（ドライバー）',
+		type: 'date',
+		name: 'appointment_at',
+		section: '解任情報',
+		placeholder: '選任日'
+	},
+	{
+		formType: 'input',
+		className: 'discharge_at',
+		areaName: 'discharge_at',
+		label: '解任日（ドライバー）',
+		type: 'date',
+		name: 'discharge_at',
+		section: '解任情報',
+		placeholder: '解任日'
+	},
+	{
+		formType: 'input',
+		className: 'discharge_reason',
+		areaName: 'discharge_reason',
+		label: '解任理由（ドライバー）',
+		type: 'text',
+		name: 'discharge_reason',
+		section: '解任情報',
+		placeholder: '解任理由'
+	},
+	// 退職情報セクション
 	{
 		formType: 'input',
 		className: 'leave_date',
@@ -274,11 +342,56 @@ export const employmentInfoData: FieldConfig[] = [
 		label: '退職日',
 		type: 'date',
 		name: 'leave_date',
+		section: '退職情報',
 		placeholder: '退職日'
+	},
+	{
+		formType: 'input',
+		className: 'leave_reason',
+		areaName: 'leave_reason',
+		label: '退職理由',
+		type: 'text',
+		name: 'leave_reason',
+		section: '退職情報',
+		placeholder: '退職理由'
+	},
+	// 死亡情報セクション
+	{
+		formType: 'input',
+		className: 'death_at',
+		areaName: 'death_at',
+		label: '死亡年月日',
+		type: 'date',
+		name: 'death_at',
+		section: '死亡情報',
+		placeholder: '死亡年月日'
+	},
+	{
+		formType: 'input',
+		className: 'death_reason',
+		areaName: 'death_reason',
+		label: '死亡理由',
+		type: 'text',
+		name: 'death_reason',
+		section: '死亡情報',
+		placeholder: '死亡理由'
 	}
 ];
 // 免許証情報
 export const licenseInfoData: FieldConfig[] = [
+	{
+		formType: 'select',
+		className: 'license_type',
+		areaName: 'type',
+		label: '免許証タイプ',
+		type: 'select',
+		name: 'license_type_id',
+		options: [
+			{ value: '1', label: '中型', selected: true },
+			{ value: '2', label: '大型' },
+			{ value: '3', label: '牽引' }
+		]
+	},
 	{
 		formType: 'input',
 		className: 'license_number',
@@ -325,7 +438,11 @@ export const qualificationInfoData: FieldConfig[] = [
 		label: '資格証書タイプ',
 		type: 'select',
 		name: 'qualification_certificate_type_id',
-		options: [{ value: '1', label: 'フォークリフト', selected: true }, { value: '2', label: '玉掛け' }, { value: '3', label: '5トン未満クレーン' }]
+		options: [
+			{ value: '1', label: 'フォークリフト', selected: true },
+			{ value: '2', label: '玉掛け' },
+			{ value: '3', label: '5トン未満クレーン' }
+		]
 	},
 	{
 		formType: 'input',
@@ -373,7 +490,12 @@ export const insuranceInfoData: FieldConfig[] = [
 		label: '保険タイプ',
 		type: 'select',
 		name: 'insurance_type_id',
-		options: [{ value: '1', label: '健康保険', selected: true }, { value: '2', label: '厚生年金' }, { value: '3', label: '雇用保険' }, { value: '4', label: 'その他' }]
+		options: [
+			{ value: '1', label: '健康保険', selected: true },
+			{ value: '2', label: '厚生年金' },
+			{ value: '3', label: '雇用保険' },
+			{ value: '4', label: 'その他' }
+		]
 	},
 	{
 		formType: 'input',
@@ -460,7 +582,13 @@ export const educationInfoData: FieldConfig[] = [
 		label: '学歴タイプ',
 		type: 'select',
 		name: 'education_type_id',
-		options: [{ value: '1', label: '中学校', selected: true }, { value: '2', label: '高校' }, { value: '3', label: '大学' }, { value: '4', label: '専門学校' }, { value: '5', label: 'その他' }]
+		options: [
+			{ value: '1', label: '中学校', selected: true },
+			{ value: '2', label: '高校' },
+			{ value: '3', label: '大学' },
+			{ value: '4', label: '専門学校' },
+			{ value: '5', label: 'その他' }
+		]
 	},
 	{
 		formType: 'input',
@@ -488,5 +616,236 @@ export const educationInfoData: FieldConfig[] = [
 		type: 'date',
 		name: 'education_end_date',
 		placeholder: '卒業日'
+	}
+];
+// その他情報
+export const otherInfoData: FieldConfig[] = [
+	{
+		formType: 'input',
+		className: 'death_at',
+		areaName: 'death_at',
+		label: '死亡年月日',
+		type: 'date',
+		name: 'death_at',
+		placeholder: '死亡年月日'
+	},
+	{
+		formType: 'input',
+		className: 'death_reason',
+		areaName: 'death_reason',
+		label: '死亡理由',
+		type: 'text',
+		name: 'death_reason',
+		placeholder: '死亡理由'
+	},
+	{
+		formType: 'input',
+		className: 'note',
+		areaName: 'note',
+		label: '備考欄',
+		type: 'text',
+		name: 'note',
+		placeholder: '備考欄'
+	}
+];
+// 銀行情報
+export const bankAccountInfoData: FieldConfig[] = [
+	{
+		formType: 'select',
+		className: 'bank_account_type',
+		areaName: 'type',
+		label: '口座タイプ',
+		type: 'select',
+		name: 'bank_account_type_id',
+		options: [
+			{ value: '1', label: '会社', selected: true },
+			{ value: '2', label: '取引先' },
+			{ value: '3', label: '従業員' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'bank_name',
+		areaName: 'bank_name',
+		label: '銀行名',
+		type: 'text',
+		name: 'bank_name',
+		placeholder: '銀行名'
+	},
+	{
+		formType: 'input',
+		className: 'branch_name',
+		areaName: 'branch_name',
+		label: '支店名',
+		type: 'text',
+		name: 'branch_name',
+		placeholder: '支店名'
+	},
+	{
+		formType: 'input',
+		className: 'account_number',
+		areaName: 'account_number',
+		label: '口座番号',
+		type: 'text',
+		name: 'account_number',
+		placeholder: '口座番号'
+	},
+	{
+		formType: 'input',
+		className: 'account_holder',
+		areaName: 'account_holder',
+		label: '口座名義',
+		type: 'text',
+		name: 'account_holder',
+		placeholder: '口座名義'
+	}
+];
+// 健康診断情報
+export const healthCheckupInfoData: FieldConfig[] = [
+	{
+		formType: 'select',
+		className: 'health_checkup_type',
+		areaName: 'type',
+		label: '健康診断タイプ',
+		type: 'select',
+		name: 'health_checkup_type_id',
+		options: [
+			{ value: '1', label: '定期健康診断', selected: true },
+			{ value: '2', label: '特定健康診断' },
+			{ value: '3', label: 'その他' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'health_checkup_result',
+		areaName: 'result',
+		label: '結果',
+		type: 'text',
+		name: 'health_checkup_result',
+		placeholder: '結果'
+	},
+	{
+		formType: 'input',
+		className: 'health_checkup_content',
+		areaName: 'content',
+		label: '内容',
+		type: 'text',
+		name: 'health_checkup_content',
+		placeholder: '内容'
+	},
+	{
+		formType: 'input',
+		className: 'health_checkup_date',
+		areaName: 'date_at',
+		label: '診断日',
+		type: 'date',
+		name: 'health_checkup_date_at',
+		placeholder: '診断日'
+	},
+	{
+		formType: 'input',
+		className: 'health_checkup_pdf',
+		areaName: 'pdf_url',
+		label: 'PDF',
+		type: 'file',
+		name: 'health_checkup_pdf_url',
+		placeholder: 'PDF'
+	}
+];
+// 適性診断情報
+export const suitabilityAssessmentInfoData: FieldConfig[] = [
+	{
+		formType: 'select',
+		className: 'suitability_assessment_type',
+		areaName: 'type',
+		label: '適性診断タイプ',
+		type: 'select',
+		name: 'suitability_assessment_type_id',
+		options: [
+			{ value: '1', label: '初任診断', selected: true },
+			{ value: '2', label: '一般診断' },
+			{ value: '3', label: '適齢診断' },
+			{ value: '4', label: '特別診断' },
+			{ value: '5', label: '特定診断' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'suitability_assessment_score',
+		areaName: 'score',
+		label: 'スコア',
+		type: 'number',
+		name: 'suitability_assessment_score',
+		placeholder: 'スコア'
+	},
+	{
+		formType: 'input',
+		className: 'suitability_assessment_result',
+		areaName: 'result',
+		label: '結果',
+		type: 'text',
+		name: 'suitability_assessment_result',
+		placeholder: '結果'
+	},
+	{
+		formType: 'input',
+		className: 'suitability_assessment_pdf',
+		areaName: 'pdf_url',
+		label: 'PDF',
+		type: 'file',
+		name: 'suitability_assessment_pdf_url',
+		placeholder: 'PDF'
+	}
+];
+// 特別教育情報
+export const specialEducationInfoData: FieldConfig[] = [
+	{
+		formType: 'select',
+		className: 'special_education_type',
+		areaName: 'type',
+		label: '特別教育タイプ',
+		type: 'select',
+		name: 'special_education_type_id',
+		options: [
+			{ value: '1', label: '特別教育1', selected: true },
+			{ value: '2', label: '特別教育2' },
+			{ value: '3', label: '特別教育3' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'special_education_trainer',
+		areaName: 'trainer',
+		label: '講師',
+		type: 'text',
+		name: 'special_education_trainer',
+		placeholder: '講師'
+	},
+	{
+		formType: 'input',
+		className: 'special_education_content',
+		areaName: 'content',
+		label: '内容',
+		type: 'text',
+		name: 'special_education_content',
+		placeholder: '内容'
+	},
+	{
+		formType: 'input',
+		className: 'special_education_start_date',
+		areaName: 'start_at',
+		label: '開始日',
+		type: 'date',
+		name: 'special_education_start_at',
+		placeholder: '開始日'
+	},
+	{
+		formType: 'input',
+		className: 'special_education_end_date',
+		areaName: 'end_at',
+		label: '終了日',
+		type: 'date',
+		name: 'special_education_end_at',
+		placeholder: '終了日'
 	}
 ];

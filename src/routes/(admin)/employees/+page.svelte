@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Search from '$lib/components/Search.svelte';
-	import Createform from './components/createform.svelte';
 	import { employeeData, nationalityData, type Employee } from './data/employeeData';
 
 	import Card from './components/card.svelte';
@@ -8,30 +7,26 @@
 	// 従業員データ(ダミーデータ)
 	const employeesData: Employee[] = employeeData;
 
-	// モーダルの開閉状態
-	let isModalOpen = $state(false);
-
 	// グループ化のオン/オフ
 	let isGrouped = $state(true);
 
 	// 在職中のオン/オフ
 	let isActive = $state(true);
-
 </script>
 
 <div>
 	<div class="main-header">
 		<Search />
-		<button class="btn" onclick={() => (isModalOpen = true)}>作成</button>
+		<a href="/employees/create" class="btn">作成</a>
 	</div>
 	<div class="container employees-list">
 		<div class="employees-header">
 			<p>従業員一覧</p>
 			<p>
-				<!-- isActive: true → 在職中, false → 全員 -->
-				{isActive ? '在職中' : '全'}の従業員数: {isActive
+				<!-- isActive: true → 在職中, false → 退職者 -->
+				{isActive ? '在職中' : '退職者'}の従業員数: {isActive
 					? employeesData.filter((employee) => employee.isActive).length
-					: employeesData.length}
+					: employeesData.filter((employee) => !employee.isActive).length}
 			</p>
 			<div class="employees-header-checkbox">
 				<!-- グループ化のオン/オフの表示 -->
@@ -42,7 +37,7 @@
 				<!-- 在職中　on / off の表示 -->
 				<label class={['checkbox btn', { isActive }]}>
 					<input type="checkbox" onchange={() => (isActive = !isActive)} />
-					{isActive ? '在職中' : '不在'}
+					{isActive ? '在職中' : '退職者'}
 				</label>
 			</div>
 		</div>
@@ -55,7 +50,7 @@
 				<!-- 表示対象の従業員（isActiveフィルター適用後） -->
 				{@const displayEmployees = isActive
 					? filteredEmployees.filter((e) => e.isActive)
-					: filteredEmployees}
+					: filteredEmployees.filter((e) => !e.isActive)}
 
 				<!-- 表示する従業員がいる場合のみグループを表示 -->
 				{#if displayEmployees.length > 0}
@@ -68,11 +63,11 @@
 			{/each}
 		{:else}
 			<!--フラット表示（グループなし）-->
-			{@const displayEmployees = isActive ? employeesData.filter((e) => e.isActive) : employeesData}
+			{@const displayEmployees = isActive 
+				? employeesData.filter((e) => e.isActive) 
+				: employeesData.filter((e) => !e.isActive)}
 			<Card employees={displayEmployees} />
 		{/if}
-
-		<Createform bind:open={isModalOpen} />
 	</div>
 </div>
 

@@ -56,9 +56,14 @@
 	border-radius: var(--radius);
 	background-color: var(--color-white);
 	color: var(--color-text);
+	height: 40px;
 	&:focus {
 		outline: none;
 	}
+}
+
+:where(input[type='text'], input[type='email'], input[type='tel'], input[type='password']) {
+	height: 40px;
 }
 
 body {
@@ -164,7 +169,8 @@ input[type='checkbox'] {
 	padding: 0.25em 1em;
 	border-radius: var(--radius);
 	background-color: var(--color-border);
-	&.isGrouped, &.isActive {
+	&.isGrouped,
+	&.isActive {
 		background-color: var(--color-primary);
 	}
 }

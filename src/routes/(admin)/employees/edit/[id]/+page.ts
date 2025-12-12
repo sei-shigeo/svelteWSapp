@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { employeeData, type Employee } from '../data/employeeData';
+import { employeeData, type Employee } from '../../data/employeeData';
 
 export const load: PageLoad = async ({ params }) => {
 	if (!params.id) {
@@ -18,3 +18,4 @@ export const load: PageLoad = async ({ params }) => {
 		employee
 	};
 };
+

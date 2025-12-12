@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import { nationalityData } from '../../data/employeeData';
+	import { nationalityData } from '../../../data/employeeData';
 	import defaultAvatar from '$lib/assets/images/avatar.png';
 
 	let { data }: PageProps = $props();
@@ -191,7 +191,7 @@
 
 	// 国籍ラベルを取得
 	function getNationalityLabel(id: number): string {
-		const nationality = nationalityData.find((n) => n.id === id);
+		const nationality = nationalityData.find((n: { id: number; label: string }) => n.id === id);
 		return nationality?.label || '-';
 	}
 
@@ -260,7 +260,7 @@
 				</svg>
 				印刷する
 			</button>
-			<a href={`/employees/${employee.id}`} class="back-btn">戻る</a>
+			<a href={`/employees/details/${employee.id}`} class="back-btn">戻る</a>
 		</div>
 
 		<!-- ページ選択 -->
@@ -474,236 +474,238 @@
 	</div>
 
 	<!-- 動的ページ表示 -->
-	{#each pageDefinitions as page, pageIndex}
-		{#if isPageVisible(page.id)}
-			<div class="print-container print-page-section">
-				<header class="header">
-					<h1>従業員情報</h1>
-					<p class="print-date">印刷日: {new Date().toLocaleDateString('ja-JP')}</p>
-				</header>
+	<div class="content-area">
+		{#each pageDefinitions as page, pageIndex}
+			{#if isPageVisible(page.id)}
+				<div class="print-container print-page-section">
+					<header class="header">
+						<h1>従業員情報</h1>
+						<p class="print-date">印刷日: {new Date().toLocaleDateString('ja-JP')}</p>
+					</header>
 
-				{#each page.sections as sectionId}
-					{#if sections[sectionId as keyof typeof sections]}
-						{#if sectionId === 'basicInfo'}
-							<section class="section">
-								<h2 class="section-title">基本情報</h2>
-								<div class="basic-info">
-									<div class="avatar-container">
-										<img src={employee.image || defaultAvatar} alt="従業員写真" class="avatar" />
+					{#each page.sections as sectionId}
+						{#if sections[sectionId as keyof typeof sections]}
+							{#if sectionId === 'basicInfo'}
+								<section class="section">
+									<h2 class="section-title">基本情報</h2>
+									<div class="basic-info">
+										<div class="avatar-container">
+											<img src={employee.image || defaultAvatar} alt="従業員写真" class="avatar" />
+										</div>
+										<table class="info-table">
+											<tbody>
+												<tr>
+													<th>従業員ID</th>
+													<td>{employee.code || '-'}</td>
+													<th>ステータス</th>
+													<td>
+														<span class="status" class:active={employee.isActive}>
+															{employee.isActive ? '在籍中' : '退職'}
+														</span>
+													</td>
+												</tr>
+												<tr>
+													<th>氏名</th>
+													<td>{getFullName()}</td>
+													<th>氏名（カナ）</th>
+													<td>{getFullNameKana()}</td>
+												</tr>
+												<tr>
+													<th>国籍</th>
+													<td>{getNationalityLabel(employee.nationality)}</td>
+													<th>性別</th>
+													<td>{getGenderLabel(employee.gender)}</td>
+												</tr>
+												<tr>
+													<th>生年月日</th>
+													<td>{formatDate(employee.dateOfBirth)}</td>
+													<th>血液型</th>
+													<td>{getBloodTypeLabel(employee.bloodType)}</td>
+												</tr>
+											</tbody>
+										</table>
 									</div>
-									<table class="info-table">
+								</section>
+							{:else if sectionId === 'contactInfo'}
+								<section class="section">
+									<h2 class="section-title">連絡先情報</h2>
+									<table class="info-table full-width">
 										<tbody>
 											<tr>
-												<th>従業員ID</th>
-												<td>{employee.code || '-'}</td>
-												<th>ステータス</th>
-												<td>
-													<span class="status" class:active={employee.isActive}>
-														{employee.isActive ? '在籍中' : '退職'}
-													</span>
-												</td>
+												<th>電話番号</th>
+												<td>{employee.phone_mobile || employee.phone_tel || '-'}</td>
+												<th>Email</th>
+												<td>{employee.email || '-'}</td>
 											</tr>
 											<tr>
-												<th>氏名</th>
-												<td>{getFullName()}</td>
-												<th>氏名（カナ）</th>
-												<td>{getFullNameKana()}</td>
-											</tr>
-											<tr>
-												<th>国籍</th>
-												<td>{getNationalityLabel(employee.nationality)}</td>
-												<th>性別</th>
-												<td>{getGenderLabel(employee.gender)}</td>
-											</tr>
-											<tr>
-												<th>生年月日</th>
-												<td>{formatDate(employee.dateOfBirth)}</td>
-												<th>血液型</th>
-												<td>{getBloodTypeLabel(employee.bloodType)}</td>
+												<th>郵便番号</th>
+												<td>{employee.postal_code || '-'}</td>
+												<th>住所</th>
+												<td>{employee.address || '-'}</td>
 											</tr>
 										</tbody>
 									</table>
-								</div>
-							</section>
-						{:else if sectionId === 'contactInfo'}
-							<section class="section">
-								<h2 class="section-title">連絡先情報</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>電話番号</th>
-											<td>{employee.phone || '-'}</td>
-											<th>メールアドレス</th>
-											<td>{employee.email || '-'}</td>
-										</tr>
-										<tr>
-											<th>郵便番号</th>
-											<td>{employee.postalCode || '-'}</td>
-											<th>住所</th>
-											<td>{employee.address || '-'}</td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'emergencyContact'}
-							<section class="section">
-								<h2 class="section-title">緊急連絡先</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>続柄</th>
-											<td>-</td>
-											<th>氏名</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>電話番号</th>
-											<td>-</td>
-											<th>メールアドレス</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>住所</th>
-											<td colspan="3">-</td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'employmentInfo'}
-							<section class="section">
-								<h2 class="section-title">雇用情報</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>雇用形態</th>
-											<td>-</td>
-											<th>部署</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>役職</th>
-											<td>-</td>
-											<th>入社日</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>退社日</th>
-											<td>-</td>
-											<th></th>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'licenseInfo'}
-							<section class="section">
-								<h2 class="section-title">免許証情報</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>免許証番号</th>
-											<td>-</td>
-											<th>有効期限</th>
-											<td>-</td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'qualificationInfo'}
-							<section class="section">
-								<h2 class="section-title">資格証書情報</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>資格種類</th>
-											<td>-</td>
-											<th>資格番号</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>有効期限</th>
-											<td>-</td>
-											<th></th>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'insuranceInfo'}
-							<section class="section">
-								<h2 class="section-title">保険情報</h2>
-								<table class="info-table full-width">
-									<tbody>
-										<tr>
-											<th>保険種類</th>
-											<td>-</td>
-											<th>保険番号</th>
-											<td>-</td>
-										</tr>
-										<tr>
-											<th>有効期限</th>
-											<td>-</td>
-											<th></th>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'jobHistory'}
-							<section class="section">
-								<h2 class="section-title">職歴情報</h2>
-								<table class="info-table full-width">
-									<thead>
-										<tr>
-											<th>会社名</th>
-											<th>業務内容</th>
-											<th>開始日</th>
-											<th>終了日</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
-						{:else if sectionId === 'educationInfo'}
-							<section class="section">
-								<h2 class="section-title">学歴情報</h2>
-								<table class="info-table full-width">
-									<thead>
-										<tr>
-											<th>学校種別</th>
-											<th>学校名</th>
-											<th>入学日</th>
-											<th>卒業日</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-										</tr>
-									</tbody>
-								</table>
-							</section>
+								</section>
+							{:else if sectionId === 'emergencyContact'}
+								<section class="section">
+									<h2 class="section-title">緊急連絡先</h2>
+									<table class="info-table full-width">
+										<tbody>
+											<tr>
+												<th>続柄</th>
+												<td>-</td>
+												<th>氏名</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>電話番号</th>
+												<td>-</td>
+												<th>メールアドレス</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>住所</th>
+												<td colspan="3">-</td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'employmentInfo'}
+								<section class="section">
+									<h2 class="section-title">雇用情報</h2>
+									<table class="info-table full-width">
+										<tbody>
+											<tr>
+												<th>雇用形態</th>
+												<td>-</td>
+												<th>部署</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>役職</th>
+												<td>-</td>
+												<th>入社日</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>退社日</th>
+												<td>-</td>
+												<th></th>
+												<td></td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'licenseInfo'}
+								<section class="section">
+									<h2 class="section-title">免許証情報</h2>
+									<table class="info-table full-width">
+										<tbody>
+											<tr>
+												<th>免許証番号</th>
+												<td>-</td>
+												<th>有効期限</th>
+												<td>-</td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'qualificationInfo'}
+								<section class="section">
+									<h2 class="section-title">資格証書情報</h2>
+									<table class="info-table full-width">
+										<tbody>
+											<tr>
+												<th>資格種類</th>
+												<td>-</td>
+												<th>資格番号</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>有効期限</th>
+												<td>-</td>
+												<th></th>
+												<td></td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'insuranceInfo'}
+								<section class="section">
+									<h2 class="section-title">保険情報</h2>
+									<table class="info-table full-width">
+										<tbody>
+											<tr>
+												<th>保険種類</th>
+												<td>-</td>
+												<th>保険番号</th>
+												<td>-</td>
+											</tr>
+											<tr>
+												<th>有効期限</th>
+												<td>-</td>
+												<th></th>
+												<td></td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'jobHistory'}
+								<section class="section">
+									<h2 class="section-title">職歴情報</h2>
+									<table class="info-table full-width">
+										<thead>
+											<tr>
+												<th>会社名</th>
+												<th>業務内容</th>
+												<th>開始日</th>
+												<th>終了日</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{:else if sectionId === 'educationInfo'}
+								<section class="section">
+									<h2 class="section-title">学歴情報</h2>
+									<table class="info-table full-width">
+										<thead>
+											<tr>
+												<th>学校種別</th>
+												<th>学校名</th>
+												<th>入学日</th>
+												<th>卒業日</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+											</tr>
+										</tbody>
+									</table>
+								</section>
+							{/if}
 						{/if}
-					{/if}
-				{/each}
+					{/each}
 
-				<footer class="footer">
-					<p>この書類は機密情報を含みます。取り扱いにご注意ください。</p>
-					<p class="page-number">{pageIndex + 1} / {pageDefinitions.length}</p>
-				</footer>
-			</div>
-		{/if}
-	{/each}
+					<footer class="footer">
+						<p>この書類は機密情報を含みます。取り扱いにご注意ください。</p>
+						<p class="page-number">{pageIndex + 1} / {pageDefinitions.length}</p>
+					</footer>
+				</div>
+			{/if}
+		{/each}
+	</div>
 </div>
 
 <style>
@@ -714,6 +716,8 @@
 		color: #333;
 		background: #f5f5f5;
 		min-height: 100vh;
+		display: grid;
+		grid-template-columns: 400px 1fr;
 	}
 
 	/* 印刷ボタンエリア */
@@ -723,7 +727,9 @@
 		gap: 0.75rem;
 		padding: 0.75rem 1.5rem;
 		background: #fff;
-		border-bottom: 1px solid #e0e0e0;
+		border-right: 1px solid #e0e0e0;
+		height: 100vh;
+		overflow-y: auto;
 		position: sticky;
 		top: 0;
 		z-index: 100;
@@ -820,6 +826,13 @@
 	.add-page-btn:hover {
 		background: #1d4ed8;
 		border-color: #1d4ed8;
+	}
+
+	/* 右側コンテンツエリア */
+	.content-area {
+		overflow-y: auto;
+		height: 100vh;
+		padding: 1.5rem 0;
 	}
 
 	.page-grid {
@@ -1128,6 +1141,7 @@
 	/* 印刷コンテナ（ページごと） */
 	.print-container {
 		max-width: 210mm;
+		width: 100%;
 		margin: 1.5rem auto;
 		padding: 1.5rem;
 		background: #fff;
@@ -1279,10 +1293,18 @@
 		.print-page {
 			background: #fff;
 			font-size: 10px;
+			display: block;
+			grid-template-columns: none;
+		}
+
+		.content-area {
+			height: auto;
+			overflow: visible;
+			padding: 0;
 		}
 
 		.print-container {
-			margin: 0;
+			margin: 0 auto;
 			padding: 8mm;
 			box-shadow: none;
 			max-width: none;
