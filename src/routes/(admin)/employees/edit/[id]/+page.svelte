@@ -24,7 +24,4 @@
 	<EmployeeForm mode="edit" {employee} isEditing={false} formId="edit-form" />
 </div>
 
-<style>
-	/* ページ固有のスタイルがあればここに追加 */
-</style>
 

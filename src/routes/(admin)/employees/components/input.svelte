@@ -3,10 +3,27 @@
 	let {
 		field,
 		value,
-		disabled
-	}: { field: FieldConfig; value?: string | number; disabled?: boolean } = $props();
+		disabled,
+		oninput
+	}: {
+		field: FieldConfig;
+		value?: string | number;
+		disabled?: boolean;
+		oninput?: (e: Event) => void;
+	} = $props();
 
 	const displayValue = $derived(value !== undefined ? String(value) : (field.value ?? ''));
+
+	// input要素の値を同期する（外部からvalueが変更された場合に反映）
+	let inputElement = $state<HTMLInputElement | null>(null);
+	$effect(() => {
+		if (inputElement && displayValue !== undefined) {
+			// 現在の値と異なる場合のみ更新（無限ループを防ぐ）
+			if (inputElement.value !== String(displayValue)) {
+				inputElement.value = String(displayValue);
+			}
+		}
+	});
 
 	// PDFファイルかどうかを判定
 	const isPdfFile = $derived(field.className?.includes('_pdf') || field.name?.includes('pdf'));
@@ -137,19 +154,21 @@
 		<label class={field.className} style:grid-area={field.areaName}>
 			<span data-errMsg="true">{field.label}: </span>
 			<input
+				bind:this={inputElement}
 				type={field.type}
 				name={field.name}
 				placeholder={field.placeholder}
 				value={displayValue}
 				required={field.required}
 				{disabled}
+				oninput={oninput}
 			/>
 		</label>
 	{/if}
 {:else if field.formType === 'select'}
 	<label class={field.className} style:grid-area={field.areaName}>
 		<span data-errMsg="">{field.label}: </span>
-		<select name={field.name} required {disabled}>
+		<select name={field.name} required {disabled} oninput={oninput}>
 			{#each field.options as option}
 				<option
 					value={option.value}

@@ -67,11 +67,43 @@
 		gap: var(--spacing-sm);
 	}
 
-	/* 詳細コンテナ */
+	/* 詳細コンテナ（fieldset） */
 	:global(.form-container .detail-container) {
 		background-color: var(--color-bg-muted);
+		border: 1px solid var(--color-border);
 		border-radius: var(--radius);
 		padding: var(--spacing-md);
+		margin-bottom: var(--spacing-md);
+	}
+
+	/* 詳細コンテナのlegend */
+	:global(.form-container .detail-container legend) {
+		font-size: 1em;
+		font-weight: 600;
+		color: var(--color-text);
+		padding: 0 var(--spacing-xs);
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+	}
+
+	/* 銀行情報リンク */
+	:global(.form-container .detail-container legend .bank-info-link) {
+		font-size: 0.75em;
+		font-weight: 400;
+		color: var(--color-primary);
+		text-decoration: none;
+		margin-left: var(--spacing-sm);
+		padding: 2px 8px;
+		border: 1px solid var(--color-primary);
+		border-radius: var(--radius);
+		transition: all 0.2s ease;
+	}
+
+	:global(.form-container .detail-container legend .bank-info-link:hover) {
+		background-color: var(--color-primary);
+		color: var(--color-white);
+		text-decoration: none;
 	}
 
 	/* コンテンツエリア */
@@ -83,26 +115,41 @@
 		position: relative;
 	}
 
-	:global(.form-container .content-area.entry-item) {
+	/* 複数登録可能なセクションのエントリ（fieldset） */
+	:global(.form-container .entry-item) {
 		margin-bottom: var(--spacing-md);
-		padding-bottom: var(--spacing-md);
-		padding-right: 40px;
-		border-bottom: 1px solid var(--color-border);
+		padding: var(--spacing-md);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		background-color: var(--color-bg-muted);
+		position: relative;
 	}
 
-	:global(.form-container .content-area.entry-item:last-of-type) {
-		border-bottom: none;
+	:global(.form-container .entry-item:last-of-type) {
 		margin-bottom: 0;
-		padding-bottom: 0;
+	}
+
+	:global(.form-container .entry-item-title) {
+		font-size: 0.9em;
+		font-weight: 600;
+		color: var(--color-text-muted);
+		padding: 0 var(--spacing-xs);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-sm);
+	}
+
+	:global(.form-container .entry-type-label) {
+		font-weight: 400;
+		color: var(--color-text);
+		margin-left: var(--spacing-xs);
 	}
 
 	/* 削除ボタン */
 	:global(.form-container .remove-entry) {
-		position: absolute;
-		top: var(--spacing-sm);
-		right: var(--spacing-sm);
-		width: 28px;
-		height: 28px;
+		width: 24px;
+		height: 24px;
 		padding: 0;
 		display: flex;
 		align-items: center;
@@ -113,6 +160,7 @@
 		border-radius: var(--radius);
 		cursor: pointer;
 		transition: all 0.2s ease;
+		flex-shrink: 0;
 	}
 
 	:global(.form-container .remove-entry:hover:not(:disabled)) {
@@ -139,17 +187,50 @@
 		border-top: 1px solid var(--color-border);
 	}
 
-	/* 従業員情報 */
+	/* 従業員情報 Grid Areas（基本設定） */
 	:global(.form-container .employee-info) {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	/* 基本情報サブセクション */
+	:global(.form-container .sub-section-basic) {
 		grid-template-areas:
-			'img role code nationality'
+			'img code nationality .'
 			'img gender blood_type date_of_birth'
-			'img f_name m_name l_name'
-			'image_at fk_name mk_name lk_name'
-			'. phone_mobile phone_tel email'
-			'. p_code address address';
+			'img image_at . .';
 		grid-template-columns: 200px repeat(3, 1fr);
-		grid-template-rows: repeat(6, 70px);
+		grid-template-rows: repeat(3, 70px);
+	}
+
+	/* セキュリティサブセクション */
+	:global(.form-container .sub-section-security) {
+		grid-template-areas: 'role password password_confirm';
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: 70px;
+		align-items: start;
+	}
+
+	/* 名前サブセクション */
+	:global(.form-container .sub-section-name) {
+		grid-template-areas:
+			'l_name f_name m_name'
+			'lk_name fk_name mk_name';
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(2, 70px);
+	}
+
+	/* 連絡先サブセクション */
+	:global(.form-container .sub-section-contact) {
+		grid-template-areas: 'phone_mobile phone_tel email';
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: 70px;
+	}
+
+	/* 住まいサブセクション */
+	:global(.form-container .sub-section-address) {
+		grid-template-areas: 'p_code address address';
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: 70px;
 	}
 
 	/* 画像関連のグローバルスタイル */
@@ -187,26 +268,24 @@
 			'email email address address';
 	}
 
-	/* サブセクション */
+	/* サブセクション（fieldset） */
 	:global(.form-container .sub-section) {
 		margin-bottom: var(--spacing-md);
-		padding-bottom: var(--spacing-md);
-		border-bottom: 1px solid var(--color-border);
+		padding: var(--spacing-md);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		background-color: var(--color-bg-muted);
 	}
 
 	:global(.form-container .sub-section:last-child) {
-		border-bottom: none;
 		margin-bottom: 0;
-		padding-bottom: 0;
 	}
 
 	:global(.form-container .sub-section-title) {
 		font-size: 0.9em;
 		font-weight: 600;
 		color: var(--color-text-muted);
-		margin-bottom: var(--spacing-sm);
-		padding-bottom: var(--spacing-xs);
-		border-bottom: 1px solid var(--color-border);
+		padding: 0 var(--spacing-xs);
 	}
 
 	/* 雇用情報 Grid Areas（基本設定） */
@@ -283,8 +362,10 @@
 	/* 銀行情報 Grid Areas */
 	:global(.form-container .bank-account-info) {
 		grid-template-areas:
-			'type bank_name branch_name .'
-			'account_number account_holder . .';
+			'bank_code bank_name branch_code branch_name'
+			'account_type account_number account_holder default_account';
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(2, 70px);
 	}
 
 	/* 健康診断情報 Grid Areas */
@@ -359,5 +440,58 @@
 
 	:global(.form-container .remove:hover:not(:disabled)) {
 		background-color: color-mix(in srgb, var(--color-danger) 90%, black);
+	}
+
+	/* セキュリティセクションのlabelを統一 */
+	:global(.form-container .sub-section-security label) {
+		display: grid;
+		gap: var(--spacing-xs);
+		grid-template-rows: 1.5rem 1fr;
+		min-height: 70px;
+		align-content: start;
+		& span {
+			font-size: 0.7em;
+			text-wrap: nowrap;
+		}
+	}
+
+	/* パスワード確認エラーメッセージ */
+	:global(.form-container .sub-section-security label.has-error) {
+		grid-template-rows: 1.5rem 1fr auto;
+	}
+
+	:global(.form-container .sub-section-security .error-message) {
+		color: var(--color-danger);
+		font-size: 0.7em;
+		display: block;
+		line-height: 1.2;
+		margin-top: 4px;
+	}
+
+	:global(.form-container input.error) {
+		border-color: var(--color-danger);
+	}
+
+	/* セキュリティセクションのlabelを統一 */
+	:global(.form-container .sub-section-security label) {
+		min-height: 70px;
+		align-content: start;
+	}
+
+	/* エラーメッセージ */
+	:global(.error) {
+		padding: var(--spacing-md);
+		text-align: center;
+	}
+
+	/* 印刷時にヘッダーを非表示 */
+	@media print {
+		:global(.form-container .header) {
+			display: none !important;
+		}
+
+		:global(.form-container) {
+			grid-template-rows: 1fr;
+		}
 	}
 </style>

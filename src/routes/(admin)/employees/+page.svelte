@@ -4,13 +4,8 @@
 
 	import Card from './components/card.svelte';
 
-	// 従業員データ(ダミーデータ)
 	const employeesData: Employee[] = employeeData;
-
-	// グループ化のオン/オフ
 	let isGrouped = $state(true);
-
-	// 在職中のオン/オフ
 	let isActive = $state(true);
 </script>
 
@@ -23,18 +18,15 @@
 		<div class="employees-header">
 			<p>従業員一覧</p>
 			<p>
-				<!-- isActive: true → 在職中, false → 退職者 -->
 				{isActive ? '在職中' : '退職者'}の従業員数: {isActive
 					? employeesData.filter((employee) => employee.isActive).length
 					: employeesData.filter((employee) => !employee.isActive).length}
 			</p>
 			<div class="employees-header-checkbox">
-				<!-- グループ化のオン/オフの表示 -->
 				<label class={['checkbox btn', { isGrouped }]}>
 					<input type="checkbox" onchange={() => (isGrouped = !isGrouped)} />
 					{isGrouped ? 'グループ解除' : 'グループ化'}
 				</label>
-				<!-- 在職中　on / off の表示 -->
 				<label class={['checkbox btn', { isActive }]}>
 					<input type="checkbox" onchange={() => (isActive = !isActive)} />
 					{isActive ? '在職中' : '退職者'}
@@ -43,26 +35,20 @@
 		</div>
 
 		{#if isGrouped}
-			<!--グループ化表示-->
 			{#each nationalityData as nationality}
-				<!-- 国籍ごとの従業員数を取得 -->
 				{@const filteredEmployees = employeesData.filter((e) => e.nationality === nationality.id)}
-				<!-- 表示対象の従業員（isActiveフィルター適用後） -->
 				{@const displayEmployees = isActive
 					? filteredEmployees.filter((e) => e.isActive)
 					: filteredEmployees.filter((e) => !e.isActive)}
 
-				<!-- 表示する従業員がいる場合のみグループを表示 -->
 				{#if displayEmployees.length > 0}
 					<div class="nationality-group">
 						<p>{nationality.label}（{displayEmployees.length}人）</p>
 					</div>
-
 					<Card employees={displayEmployees} />
 				{/if}
 			{/each}
 		{:else}
-			<!--フラット表示（グループなし）-->
 			{@const displayEmployees = isActive 
 				? employeesData.filter((e) => e.isActive) 
 				: employeesData.filter((e) => !e.isActive)}

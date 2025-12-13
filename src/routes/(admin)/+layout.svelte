@@ -26,4 +26,15 @@
 		min-height: 100vh;
 		transition: grid-template-columns 0.5s ease-in-out;
 	}
+
+	/* 印刷時にサイドバーを非表示 */
+	@media print {
+		.layout {
+			grid-template-columns: 1fr;
+		}
+
+		:global(.navbar-container) {
+			display: none !important;
+		}
+	}
 </style>

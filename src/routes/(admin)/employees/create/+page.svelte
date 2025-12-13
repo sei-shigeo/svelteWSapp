@@ -19,6 +19,3 @@
 	<EmployeeForm mode="create" formId="create-form" />
 </div>
 
-<style>
-	/* ページ固有のスタイルがあればここに追加 */
-</style>

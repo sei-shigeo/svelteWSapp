@@ -13,6 +13,7 @@ export type FieldConfig = {
 };
 // 従業員情報
 export const employeeInfoData: FieldConfig[] = [
+	// 基本情報セクション
 	{
 		formType: 'input',
 		className: 'employee_code',
@@ -20,6 +21,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '従業員ID',
 		type: 'text',
 		name: 'employee_id',
+		section: '基本情報',
 		placeholder: '従業員ID'
 	},
 	{
@@ -29,6 +31,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '国籍',
 		type: 'select',
 		name: 'nationality_id',
+		section: '基本情報',
 		options: [
 			{ value: '1', label: '日本', selected: true },
 			{ value: '2', label: 'ブラジル' },
@@ -42,6 +45,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '性別',
 		type: 'select',
 		name: 'gender_id',
+		section: '基本情報',
 		options: [
 			{ value: '1', label: '男性', selected: true },
 			{ value: '2', label: '女性' }
@@ -54,6 +58,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '血液型',
 		type: 'select',
 		name: 'blood_type_id',
+		section: '基本情報',
 		options: [
 			{ value: '1', label: 'A', selected: true },
 			{ value: '2', label: 'B' },
@@ -68,7 +73,63 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '生年月日',
 		type: 'date',
 		name: 'date_of_birth',
+		section: '基本情報',
 		placeholder: '生年月日'
+	},
+	{
+		formType: 'input',
+		className: 'image_at',
+		areaName: 'image_at',
+		label: '撮影日',
+		type: 'date',
+		name: 'image_at',
+		section: '基本情報',
+		placeholder: '撮影日'
+	},
+	// セキュリティセクション
+	{
+		formType: 'select',
+		className: 'role',
+		areaName: 'role',
+		label: 'ロール',
+		type: 'select',
+		name: 'role_id',
+		section: 'セキュリティ',
+		options: [
+			{ value: '1', label: '管理者', selected: true },
+			{ value: '2', label: '一般' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'password',
+		areaName: 'password',
+		label: 'パスワード',
+		type: 'password',
+		name: 'password',
+		section: 'セキュリティ',
+		placeholder: 'パスワード'
+	},
+	{
+		formType: 'input',
+		className: 'password_confirm',
+		areaName: 'password_confirm',
+		label: '確認用パスワード',
+		type: 'password',
+		name: 'password_confirm',
+		section: 'セキュリティ',
+		placeholder: '確認用パスワード'
+	},
+	// 名前セクション
+	{
+		formType: 'input',
+		className: 'last_name',
+		areaName: 'l_name',
+		label: '姓',
+		type: 'text',
+		name: 'last_name',
+		section: '名前',
+		placeholder: '姓'
 	},
 	{
 		formType: 'input',
@@ -77,6 +138,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '名',
 		type: 'text',
 		name: 'first_name',
+		section: '名前',
 		placeholder: '名'
 	},
 	{
@@ -86,16 +148,18 @@ export const employeeInfoData: FieldConfig[] = [
 		label: 'ミドルネーム',
 		type: 'text',
 		name: 'middle_name',
+		section: '名前',
 		placeholder: 'ミドルネーム'
 	},
 	{
 		formType: 'input',
-		className: 'last_name',
-		areaName: 'l_name',
-		label: '姓',
+		className: 'last_name_kana',
+		areaName: 'lk_name',
+		label: '姓(カナ)',
 		type: 'text',
-		name: 'last_name',
-		placeholder: '姓'
+		name: 'last_name_kana',
+		section: '名前',
+		placeholder: '姓(カナ)'
 	},
 	{
 		formType: 'input',
@@ -104,6 +168,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '名(カナ)',
 		type: 'text',
 		name: 'first_name_kana',
+		section: '名前',
 		placeholder: '名(カナ)'
 	},
 	{
@@ -113,17 +178,10 @@ export const employeeInfoData: FieldConfig[] = [
 		label: 'ミドルネーム(カナ)',
 		type: 'text',
 		name: 'middle_name_kana',
+		section: '名前',
 		placeholder: 'ミドルネーム(カナ)'
 	},
-	{
-		formType: 'input',
-		className: 'last_name_kana',
-		areaName: 'lk_name',
-		label: '姓(カナ)',
-		type: 'text',
-		name: 'last_name_kana',
-		placeholder: '姓(カナ)'
-	},
+	// 連絡先セクション
 	{
 		formType: 'input',
 		className: 'phone_mobile',
@@ -131,6 +189,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '携帯電話',
 		type: 'text',
 		name: 'phone_mobile',
+		section: '連絡先',
 		placeholder: '携帯電話'
 	},
 	{
@@ -140,6 +199,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '固定電話',
 		type: 'text',
 		name: 'phone_tel',
+		section: '連絡先',
 		placeholder: '固定電話'
 	},
 	{
@@ -149,8 +209,10 @@ export const employeeInfoData: FieldConfig[] = [
 		label: 'メールアドレス',
 		type: 'email',
 		name: 'email',
+		section: '連絡先',
 		placeholder: 'メールアドレス'
 	},
+	// 住まいセクション
 	{
 		formType: 'input',
 		className: 'postal_code',
@@ -158,6 +220,7 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '郵便番号',
 		type: 'text',
 		name: 'postal_code',
+		section: '住まい',
 		placeholder: '郵便番号'
 	},
 	{
@@ -167,28 +230,8 @@ export const employeeInfoData: FieldConfig[] = [
 		label: '住所',
 		type: 'text',
 		name: 'address',
+		section: '住まい',
 		placeholder: '住所'
-	},
-	{
-		formType: 'select',
-		className: 'role',
-		areaName: 'role',
-		label: 'ロール',
-		type: 'select',
-		name: 'role_id',
-		options: [
-			{ value: '1', label: '管理者', selected: true },
-			{ value: '2', label: '一般' }
-		]
-	},
-	{
-		formType: 'input',
-		className: 'image_at',
-		areaName: 'image_at',
-		label: '撮影日',
-		type: 'date',
-		name: 'image_at',
-		placeholder: '撮影日'
 	}
 ];
 // 緊急連絡先
@@ -652,16 +695,25 @@ export const otherInfoData: FieldConfig[] = [
 export const bankAccountInfoData: FieldConfig[] = [
 	{
 		formType: 'select',
-		className: 'bank_account_type',
-		areaName: 'type',
-		label: '口座タイプ',
+		className: 'bank_account_owner_type',
+		areaName: 'owner_type',
+		label: '所有者タイプ',
 		type: 'select',
-		name: 'bank_account_type_id',
+		name: 'owner_type_id',
 		options: [
-			{ value: '1', label: '会社', selected: true },
+			{ value: '1', label: '自社' },
 			{ value: '2', label: '取引先' },
-			{ value: '3', label: '従業員' }
+			{ value: '3', label: '従業員', selected: true }
 		]
+	},
+	{
+		formType: 'input',
+		className: 'bank_code',
+		areaName: 'bank_code',
+		label: '銀行コード',
+		type: 'text',
+		name: 'bank_code',
+		placeholder: '銀行コード（3桁）'
 	},
 	{
 		formType: 'input',
@@ -674,12 +726,35 @@ export const bankAccountInfoData: FieldConfig[] = [
 	},
 	{
 		formType: 'input',
+		className: 'branch_code',
+		areaName: 'branch_code',
+		label: '支店コード',
+		type: 'text',
+		name: 'branch_code',
+		placeholder: '支店コード（3桁）'
+	},
+	{
+		formType: 'input',
 		className: 'branch_name',
 		areaName: 'branch_name',
 		label: '支店名',
 		type: 'text',
 		name: 'branch_name',
 		placeholder: '支店名'
+	},
+	{
+		formType: 'select',
+		className: 'account_type',
+		areaName: 'account_type',
+		label: '口座種別',
+		type: 'select',
+		name: 'account_type',
+		options: [
+			{ value: '1', label: '普通' },
+			{ value: '2', label: '当座' },
+			{ value: '3', label: '貯金' },
+			{ value: '4', label: 'その他' }
+		]
 	},
 	{
 		formType: 'input',
@@ -698,6 +773,18 @@ export const bankAccountInfoData: FieldConfig[] = [
 		type: 'text',
 		name: 'account_holder',
 		placeholder: '口座名義'
+	},
+	{
+		formType: 'select',
+		className: 'default_account',
+		areaName: 'default_account',
+		label: 'デフォルト口座',
+		type: 'select',
+		name: 'default_account',
+		options: [
+			{ value: 'false', label: 'いいえ', selected: true },
+			{ value: 'true', label: 'はい' }
+		]
 	}
 ];
 // 健康診断情報

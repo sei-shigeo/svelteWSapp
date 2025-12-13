@@ -37,7 +37,8 @@ export const qualificationData = [
 		number: '1234567890',
 		acq_at: '2025-01-01',
 		exp_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 1,
@@ -45,7 +46,8 @@ export const qualificationData = [
 		number: '1234567890',
 		acq_at: '2025-01-01',
 		exp_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 3,
@@ -53,7 +55,8 @@ export const qualificationData = [
 		number: '1234567890',
 		acq_at: '2025-01-01',
 		exp_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	}
 ] as const;
 
@@ -64,28 +67,32 @@ export const insuranceData = [
 		type: '健康保険',
 		number: '1234567890',
 		acq_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 1,
 		type: '厚生年金',
 		number: '1234567890',
 		acq_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 1,
 		type: '雇用保険',
 		number: '1234567890',
 		acq_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 1,
 		type: 'マイナンバー',
 		number: '1234567890',
 		acq_at: '2025-01-01',
-		img: 'https://via.placeholder.com/150'
+		img: 'https://via.placeholder.com/150',
+		employee_id: 1
 	}
 ] as const;
 
@@ -100,18 +107,90 @@ export const educationType = [
 
 // 学歴データ
 export const educationData = [
-	{ id: 1, education_type_id: 1, name: '中学校', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 2, education_type_id: 2, name: '高校', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 3, education_type_id: 3, name: '大学', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 4, education_type_id: 4, name: '専門学校', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 5, education_type_id: 5, name: 'その他', start_at: '2025-01-01', end_at: '2025-01-01' }
+	{
+		id: 1,
+		education_type_id: 1,
+		name: '中学校',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 1
+	},
+	{
+		id: 2,
+		education_type_id: 2,
+		name: '高校',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 2
+	},
+	{
+		id: 3,
+		education_type_id: 3,
+		name: '大学',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 3
+	},
+	{
+		id: 4,
+		education_type_id: 4,
+		name: '専門学校',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 4
+	},
+	{
+		id: 5,
+		education_type_id: 5,
+		name: 'その他',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 5
+	}
 ] as const;
 
 // 職歴データ
 export const jobHistoryData = [
-	{ id: 1, name: '職歴1', content: '職歴1の内容', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 2, name: '職歴2', content: '職歴2の内容', start_at: '2025-01-01', end_at: '2025-01-01' },
-	{ id: 3, name: '職歴3', content: '職歴3の内容', start_at: '2025-01-01', end_at: '2025-01-01' }
+	{
+		id: 1,
+		name: '職歴1',
+		content: '職歴1の内容',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 1
+	},
+	{
+		id: 2,
+		name: '職歴2',
+		content: '職歴2の内容',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 2
+	},
+	{
+		id: 3,
+		name: '職歴3',
+		content: '職歴3の内容',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 3
+	},
+	{
+		id: 4,
+		name: '職歴4',
+		content: '職歴4の内容',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 4
+	},
+	{
+		id: 5,
+		name: '職歴5',
+		content: '職歴5の内容',
+		start_at: '2025-01-01',
+		end_at: '2025-01-01',
+		employee_id: 5
+	}
 ] as const;
 
 // 適性診断typeデータ
@@ -130,35 +209,40 @@ export const suitabilityAssessmentData = [
 		suitability_assessment_type_id: 1,
 		score: 100,
 		result: '適性診断1の結果',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 2,
 		suitability_assessment_type_id: 2,
 		score: 100,
 		result: '適性診断2の結果',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 2
 	},
 	{
 		id: 3,
 		suitability_assessment_type_id: 3,
 		score: 100,
 		result: '適性診断3の結果',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 3
 	},
 	{
 		id: 4,
 		suitability_assessment_type_id: 4,
 		score: 100,
 		result: '適性診断4の結果',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 4
 	},
 	{
 		id: 5,
 		suitability_assessment_type_id: 5,
 		score: 100,
 		result: '適性診断5の結果',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 5
 	}
 ] as const;
 
@@ -177,7 +261,8 @@ export const specialEducationData = [
 		trainer: '特別教育1',
 		content: '特別教育1の内容',
 		start_at: '2025-01-01',
-		end_at: '2025-01-01'
+		end_at: '2025-01-01',
+		employee_id: 1
 	},
 	{
 		id: 2,
@@ -185,7 +270,8 @@ export const specialEducationData = [
 		trainer: '特別教育2',
 		content: '特別教育2の内容',
 		start_at: '2025-01-01',
-		end_at: '2025-01-01'
+		end_at: '2025-01-01',
+		employee_id: 1
 	},
 	{
 		id: 3,
@@ -193,7 +279,8 @@ export const specialEducationData = [
 		trainer: '特別教育3',
 		content: '特別教育3の内容',
 		start_at: '2025-01-01',
-		end_at: '2025-01-01'
+		end_at: '2025-01-01',
+		employee_id: 1
 	}
 ] as const;
 
@@ -212,7 +299,8 @@ export const healthCheckupData = [
 		result: '正常',
 		content: '健康診断1の内容',
 		date_at: '2025-01-01',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 2,
@@ -220,7 +308,8 @@ export const healthCheckupData = [
 		result: '異常',
 		content: '健康診断2の内容',
 		date_at: '2025-01-01',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 1
 	},
 	{
 		id: 3,
@@ -228,42 +317,84 @@ export const healthCheckupData = [
 		result: 'その他',
 		content: '健康診断3の内容',
 		date_at: '2025-01-01',
-		pdf_url: 'https://via.placeholder.com/150'
+		pdf_url: 'https://via.placeholder.com/150',
+		employee_id: 1
 	}
 ] as const;
 
-// 銀行口座Type (会社、取引先、従業)
-export const bankAccountType = [
-	{ id: 1, type: '会社' },
-	{ id: 2, type: '取引先' },
-	{ id: 3, type: '従業員' }
+// 違反履歴 (複数 登録可能)
+export const violationHistoryData = [
+	{
+		id: 1,
+		violation_date: '2025-01-01',
+		violation_location: '違反場所',
+		violation_content: '違反内容',
+		employee_id: 1
+	}
 ] as const;
 
+// 事故歴 (複数 登録可能)
+export const accidentHistoryData = [
+	{
+		id: 1,
+		accident_date: '2025-01-01',
+		accident_location: '事故場所',
+		accident_summary: '事故概要',
+		employee_id: 1
+	}
+] as const;
+
+// 所有者タイプ（自社、取引先、従業員）
+export const ownerType = [
+	{ id: 1, label: '自社' },
+	{ id: 2, label: '取引先' },
+	{ id: 3, label: '従業員' }
+] as const;
+
+// 口座種別
+export const bankAccountType = [
+	{ id: 1, label: '普通' },
+	{ id: 2, label: '当座' },
+	{ id: 3, label: '貯金' },
+	{ id: 4, label: 'その他' }
+] as const;
 // 銀行口座データ (複数 登録可能)
 export const bankAccountData = [
 	{
 		id: 1,
-		bank_account_type_id: 1,
-		bank_name: '銀行1',
-		branch_name: '支店1',
-		account_number: '1234567890',
-		account_holder: '銀行1'
+		owner_type_id: 1,
+		bank_code: '123', // 銀行コード（3桁） APIを使う予定
+		bank_name: '銀行1', // 銀行名
+		branch_code: '123', // 支店コード（3桁） APIを使う予定
+		branch_name: '支店1', // 支店名
+		account_type: bankAccountType[0].id, // 口座種別（普通、当座、貯金、その他）
+		account_number: '1234567890', // 口座番号
+		account_holder: '銀行1', // 口座名義人
+		default_account: true // デフォルト口座
 	},
 	{
 		id: 2,
-		bank_account_type_id: 2,
-		bank_name: '銀行2',
-		branch_name: '支店2',
-		account_number: '1234567890',
-		account_holder: '銀行2'
+		owner_type_id: 2,
+		bank_code: '123', // 銀行コード（3桁） APIを使う予定
+		bank_name: '銀行2', // 銀行名
+		branch_code: '123', // 支店コード（3桁） APIを使う予定
+		branch_name: '支店2', // 支店名
+		account_type: bankAccountType[0].id, // 口座種別（普通、当座、貯金、その他）
+		account_number: '1234567890', // 口座番号
+		account_holder: '銀行2', // 口座名義人
+		default_account: false // デフォルト口座
 	},
 	{
 		id: 3,
-		bank_account_type_id: 3,
-		bank_name: '銀行3',
-		branch_name: '支店3',
-		account_number: '1234567890',
-		account_holder: '銀行3'
+		owner_type_id: 3,
+		bank_code: '123', // 銀行コード（3桁） APIを使う予定
+		bank_name: '銀行3', // 銀行名
+		branch_code: '123', // 支店コード（3桁） APIを使う予定
+		branch_name: '支店3', // 支店名
+		account_type: bankAccountType[0].id, // 口座種別（普通、当座、貯金、その他）
+		account_number: '1234567890', // 口座番号
+		account_holder: '銀行3', // 口座名義人
+		default_account: false // デフォルト口座
 	}
 ] as const;
 
