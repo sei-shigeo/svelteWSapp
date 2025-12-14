@@ -143,16 +143,15 @@ dialog {
 	}
 }
 
-/* 必須チェック */
+/* 必須チェック - *マークは削除（data-errMsgで「必須項目」を表示） */
 label:has(:required) > span::before {
-	content: ' *';
-	color: var(--color-danger);
-	width: 5px;
+	content: '';
+	width: 0;
 }
 
 label:not(:has(:required)) > span::before {
-	content: ' ';
-	width: 5px;
+	content: '';
+	width: 0;
 }
 
 /* チェックボックス */
@@ -175,28 +174,48 @@ input[type='checkbox'] {
 	}
 }
 
-/* エラー表示 */
-[data-errMsg='true'] {
-	display: flex;
+/* エラー表示・成功表示・必須項目表示の共通スタイル */
+[data-errMsg] {
+	display: inline-flex;
 	align-items: center;
-	gap: var(--spacing-xs);
+	line-height: 1.5rem;
+	height: 1.5rem;
 	&::after {
-		content: 'エラーメッセージ';
+		display: inline-block;
+		margin-left: var(--spacing-xs);
+		vertical-align: middle;
+		line-height: 1.5rem;
+	}
+}
+
+/* エラー表示 */
+[data-errMsg]:not([data-errMsg='']):not([data-errMsg='必須項目']) {
+	&::after {
+		content: attr(data-errMsg);
 		color: var(--color-danger);
-		margin-right: var(--spacing-xs);
+		font-size: 0.9em;
+		white-space: nowrap;
+	}
+}
+
+/* 必須項目表示 */
+[data-errMsg='必須項目'] {
+	&::after {
+		content: '必須項目';
+		color: var(--color-danger, #c33);
+		font-size: 0.9em;
+		white-space: nowrap;
 	}
 }
 
 /* 成功表示 */
 [data-errMsg=''] {
-	display: flex;
-	align-items: center;
-	gap: var(--spacing-xs);
 	&::after {
 		font-family: 'Material Symbols Outlined';
 		content: 'check';
 		color: var(--color-success);
 		font-size: 1em;
+		line-height: 1;
 	}
 }
 

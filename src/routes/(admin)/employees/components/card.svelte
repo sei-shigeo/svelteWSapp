@@ -1,6 +1,6 @@
 <script lang="ts">
 	import defaultAvatar from '$lib/assets/images/avatar.png';
-	import { type Employee } from '../data/employeeData';
+	import type { Employee } from '../types';
 
 	let { employees }: { employees: Employee[] } = $props();
 </script>

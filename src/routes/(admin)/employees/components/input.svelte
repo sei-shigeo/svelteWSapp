@@ -4,15 +4,27 @@
 		field,
 		value,
 		disabled,
+		error,
+		validationState,
+		displayMessage,
 		oninput
 	}: {
 		field: FieldConfig;
 		value?: string | number;
 		disabled?: boolean;
+		error?: string;
+		validationState?: 'error' | 'success' | 'required' | null;
+		displayMessage?: string;
 		oninput?: (e: Event) => void;
 	} = $props();
 
-	const displayValue = $derived(value !== undefined ? String(value) : (field.value ?? ''));
+	const displayValue = $derived(
+		value !== undefined && value !== null
+			? String(value)
+			: field.value !== undefined && field.value !== null
+				? String(field.value)
+				: ''
+	);
 
 	// input要素の値を同期する（外部からvalueが変更された場合に反映）
 	let inputElement = $state<HTMLInputElement | null>(null);
@@ -62,7 +74,7 @@
 			class:pdf-file={isPdfFile}
 			style:grid-area={field.areaName}
 		>
-			<span data-errMsg="true">{field.label}: </span>
+			<span>{field.label}: </span>
 			<div class="file-input-container">
 				<input
 					type="file"
@@ -151,8 +163,16 @@
 			</div>
 		</label>
 	{:else}
-		<label class={field.className} style:grid-area={field.areaName}>
-			<span data-errMsg="true">{field.label}: </span>
+		<label class={field.className} style:grid-area={field.areaName} class:has-error={!!error}>
+			<span
+				data-errMsg={validationState === 'success'
+					? ''
+					: displayMessage !== undefined
+						? displayMessage
+						: undefined}
+			>
+				{field.label}:
+			</span>
 			<input
 				bind:this={inputElement}
 				type={field.type}
@@ -161,14 +181,23 @@
 				value={displayValue}
 				required={field.required}
 				{disabled}
-				oninput={oninput}
+				class:error={!!error}
+				{oninput}
 			/>
 		</label>
 	{/if}
 {:else if field.formType === 'select'}
-	<label class={field.className} style:grid-area={field.areaName}>
-		<span data-errMsg="">{field.label}: </span>
-		<select name={field.name} required {disabled} oninput={oninput}>
+	<label class={field.className} style:grid-area={field.areaName} class:has-error={!!error}>
+		<span
+			data-errMsg={validationState === 'success'
+				? ''
+				: displayMessage !== undefined
+					? displayMessage
+					: undefined}
+		>
+			{field.label}:
+		</span>
+		<select name={field.name} required {disabled} class:error={!!error} {oninput}>
 			{#each field.options as option}
 				<option
 					value={option.value}
@@ -189,10 +218,27 @@
 		& span {
 			font-size: 0.7em;
 			text-wrap: nowrap;
+			line-height: 1.5rem;
+			height: 1.5rem;
+			display: flex;
+			align-items: center;
 		}
-		& input,
+		& input:not([type='date']):not([type='time']):not([type='datetime-local']),
 		& select {
 			appearance: none;
+		}
+		& input[type='date'],
+		& input[type='time'],
+		& input[type='datetime-local'] {
+			appearance: auto;
+		}
+		&.has-error {
+			grid-template-rows: 1.5rem 1fr auto;
+		}
+		& input.error,
+		& select.error {
+			border-color: var(--color-danger, #c33);
+			border-width: 2px;
 		}
 	}
 

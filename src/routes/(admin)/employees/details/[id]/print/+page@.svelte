@@ -1,6 +1,27 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import { nationalityData } from '../../../data/employeeData';
+	import type { Nationality } from '../../../types';
+	import { onMount } from 'svelte';
+
+	let nationalityData: Nationality[] = $state([]);
+
+	// マスタデータを取得（クライアントサイドのみ）
+	async function loadMasters() {
+		if (typeof window === 'undefined') return;
+		try {
+			const response = await fetch('/employees/api/masters');
+			if (response.ok) {
+				const masters = await response.json();
+				nationalityData = masters.nationalityData;
+			}
+		} catch (error) {
+			console.error('Error loading master data:', error);
+		}
+	}
+
+	onMount(() => {
+		loadMasters();
+	});
 	import defaultAvatar from '$lib/assets/images/avatar.png';
 
 	let { data }: PageProps = $props();

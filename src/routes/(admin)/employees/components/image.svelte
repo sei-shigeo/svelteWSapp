@@ -1,7 +1,11 @@
 <script lang="ts">
-	let { employeeImageSrc = $bindable() }: { employeeImageSrc: string } = $props();
+	let {
+		employeeImageSrc = $bindable(),
+		disabled = false
+	}: { employeeImageSrc: string; disabled?: boolean } = $props();
 	// 画像変更ハンドラー（Svelte風）
 	const imageChangeHandler = (event: Event) => {
+		if (disabled) return;
 		const target = event.target as HTMLInputElement;
 		if (!target.files?.[0]) return;
 
@@ -14,16 +18,17 @@
 </script>
 
 <div class="image-container" style:grid-area="img">
-	<span class="image-label" data-errMsg="true">画像: </span>
+	<span class="image-label">画像: </span>
 	<div class="image-wrapper">
 		<input
 			type="file"
 			name="image"
 			id="image"
 			style="display: none;"
+			{disabled}
 			onchange={imageChangeHandler}
 		/>
-		<label for="image" class="image-click-area">
+		<label for="image" class="image-click-area" class:disabled>
 			<img class="employee-image" src={employeeImageSrc} alt="従業員画像" />
 		</label>
 	</div>
@@ -37,7 +42,8 @@
 		gap: var(--spacing-xs);
 		grid-template-rows: 1.5rem 1fr;
 		& .image-label {
-			display: block;
+			display: flex;
+			align-items: center;
 			font-size: 0.7em;
 			text-wrap: nowrap;
 			height: 1.5rem;
@@ -82,6 +88,13 @@
 			}
 			&:hover::after {
 				background-color: rgba(255, 255, 255, 1);
+			}
+			&.disabled {
+				cursor: not-allowed;
+				opacity: 0.6;
+				&::after {
+					display: none;
+				}
 			}
 		}
 	}

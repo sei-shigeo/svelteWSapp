@@ -6,6 +6,9 @@
 		field: FieldConfig;
 		value?: string | number;
 		disabled?: boolean;
+		error?: string;
+		validationState?: 'error' | 'success' | 'required' | null;
+		displayMessage?: string;
 		oninput?: (e: Event) => void;
 		onBankInfoChange?: (bankCode: string, bankName: string) => void;
 		onBranchInfoChange?: (branchCode: string, branchName: string) => void;
@@ -16,13 +19,22 @@
 		field,
 		value,
 		disabled,
+		error,
+		validationState,
+		displayMessage,
 		oninput,
 		onBankInfoChange,
 		onBranchInfoChange,
 		bankCode = ''
 	}: Props = $props();
 
-	const displayValue = $derived(value !== undefined ? String(value) : (field.value ?? ''));
+	const displayValue = $derived(
+		value !== undefined && value !== null
+			? String(value)
+			: field.value !== undefined && field.value !== null
+				? String(field.value)
+				: ''
+	);
 
 	// 検索結果の状態
 	let searchResults = $state<Array<{ code: string; name: string }>>([]);
@@ -58,8 +70,8 @@
 				{
 					method: 'GET',
 					headers: {
-						'Accept': 'application/json',
-						'apikey': apiKey
+						Accept: 'application/json',
+						apikey: apiKey
 					}
 				}
 			);
@@ -77,7 +89,9 @@
 			} else if (response.status === 403) {
 				const errorData = await response.json().catch(() => ({}));
 				console.error('APIキー制限エラー（403）:', errorData);
-				console.error('HTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください');
+				console.error(
+					'HTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください'
+				);
 				searchResults = [];
 				showSuggestions = false;
 			} else {
@@ -112,8 +126,8 @@
 				{
 					method: 'GET',
 					headers: {
-						'Accept': 'application/json',
-						'apikey': apiKey
+						Accept: 'application/json',
+						apikey: apiKey
 					}
 				}
 			);
@@ -122,16 +136,20 @@
 				const data = await response.json();
 				// v3のレスポンス形式: { branches: [...], size: number, ... }
 				if (data.branches && Array.isArray(data.branches)) {
-					searchResults = data.branches.slice(0, 10).map((item: { code?: string; name?: string }) => ({
-						code: item.code || '',
-						name: item.name || ''
-					}));
+					searchResults = data.branches
+						.slice(0, 10)
+						.map((item: { code?: string; name?: string }) => ({
+							code: item.code || '',
+							name: item.name || ''
+						}));
 					showSuggestions = searchResults.length > 0;
 				}
 			} else if (response.status === 403) {
 				const errorData = await response.json().catch(() => ({}));
 				console.error('APIキー制限エラー（403）:', errorData);
-				console.error('HTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください');
+				console.error(
+					'HTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください'
+				);
 				searchResults = [];
 				showSuggestions = false;
 			} else {
@@ -156,7 +174,9 @@
 		try {
 			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
 			if (!apiKey) {
-				console.error('APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。');
+				console.error(
+					'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
+				);
 				return null;
 			}
 
@@ -166,8 +186,8 @@
 			let response = await fetch(url, {
 				method: 'GET',
 				headers: {
-					'Accept': 'application/json',
-					'apikey': apiKey
+					Accept: 'application/json',
+					apikey: apiKey
 				}
 			});
 
@@ -182,20 +202,24 @@
 				const errorData = await response.json().catch(() => ({}));
 				console.error('APIキー制限エラー（403）:', errorData);
 				console.error('解決方法:');
-				console.error('1. BankCodeJP APIダッシュボードでAPIキーのHTTPリファラー制限を確認してください');
+				console.error(
+					'1. BankCodeJP APIダッシュボードでAPIキーのHTTPリファラー制限を確認してください'
+				);
 				console.error('2. 開発環境の場合、以下のリファラーを追加してください:');
 				console.error('   - http://localhost:5173/*');
 				console.error('   - http://localhost:*/*');
 				console.error('3. 本番環境のURLも追加してください');
-				alert('APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。');
+				alert(
+					'APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。'
+				);
 			} else if (response.status === 404) {
 				// 個別取得で見つからない場合は、フィルタで検索
 				url = `https://apis.bankcode-jp.com/v3/banks?filter=code=${encodeURIComponent(code)}&limit=1`;
 				response = await fetch(url, {
 					method: 'GET',
 					headers: {
-						'Accept': 'application/json',
-						'apikey': apiKey
+						Accept: 'application/json',
+						apikey: apiKey
 					}
 				});
 
@@ -208,14 +232,26 @@
 				} else if (response.status === 403) {
 					const errorData = await response.json().catch(() => ({}));
 					console.error('APIキー制限エラー（フィルタ、403）:', errorData);
-					alert('APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。');
+					alert(
+						'APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。'
+					);
 				} else {
 					const errorText = await response.text();
-					console.error('銀行名取得APIエラー（フィルタ）:', response.status, response.statusText, errorText);
+					console.error(
+						'銀行名取得APIエラー（フィルタ）:',
+						response.status,
+						response.statusText,
+						errorText
+					);
 				}
 			} else {
 				const errorText = await response.text();
-				console.error('銀行名取得APIエラー（個別取得）:', response.status, response.statusText, errorText);
+				console.error(
+					'銀行名取得APIエラー（個別取得）:',
+					response.status,
+					response.statusText,
+					errorText
+				);
 			}
 		} catch (error) {
 			console.error('銀行名取得エラー:', error);
@@ -230,7 +266,9 @@
 		try {
 			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
 			if (!apiKey) {
-				console.error('APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。');
+				console.error(
+					'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
+				);
 				return null;
 			}
 
@@ -240,8 +278,8 @@
 			let response = await fetch(url, {
 				method: 'GET',
 				headers: {
-					'Accept': 'application/json',
-					'apikey': apiKey
+					Accept: 'application/json',
+					apikey: apiKey
 				}
 			});
 
@@ -260,8 +298,8 @@
 				response = await fetch(url, {
 					method: 'GET',
 					headers: {
-						'Accept': 'application/json',
-						'apikey': apiKey
+						Accept: 'application/json',
+						apikey: apiKey
 					}
 				});
 
@@ -274,18 +312,32 @@
 				} else if (response.status === 403) {
 					const errorData = await response.json().catch(() => ({}));
 					console.error('APIキー制限エラー（フィルタ、403）:', errorData);
-					alert('APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。');
+					alert(
+						'APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。'
+					);
 				} else {
 					const errorText = await response.text();
-					console.error('支店名取得APIエラー（フィルタ）:', response.status, response.statusText, errorText);
+					console.error(
+						'支店名取得APIエラー（フィルタ）:',
+						response.status,
+						response.statusText,
+						errorText
+					);
 				}
 			} else if (response.status === 403) {
 				const errorData = await response.json().catch(() => ({}));
 				console.error('APIキー制限エラー（個別取得、403）:', errorData);
-				alert('APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。');
+				alert(
+					'APIキーの制限によりリクエストが拒否されました。\nHTTPリファラー制限に開発環境のURL（http://localhost:5173/*）が含まれているか確認してください。'
+				);
 			} else {
 				const errorText = await response.text();
-				console.error('支店名取得APIエラー（個別取得）:', response.status, response.statusText, errorText);
+				console.error(
+					'支店名取得APIエラー（個別取得）:',
+					response.status,
+					response.statusText,
+					errorText
+				);
 			}
 		} catch (error) {
 			console.error('支店名取得エラー:', error);
@@ -349,6 +401,10 @@
 			input.value = result.code;
 			const event = new Event('input', { bubbles: true });
 			input.dispatchEvent(event);
+			// 元のoninputイベントを呼び出し
+			if (oninput) {
+				oninput(event);
+			}
 		}
 
 		// 銀行情報または支店情報の変更を通知
@@ -356,14 +412,6 @@
 			onBankInfoChange(result.code, result.name);
 		} else if (field.name === 'branch_code' && onBranchInfoChange) {
 			onBranchInfoChange(result.code, result.name);
-		}
-
-		// 元のoninputイベントを呼び出し
-		if (oninput) {
-			const syntheticEvent = {
-				target: { value: result.code }
-			} as Event;
-			oninput(syntheticEvent);
 		}
 	}
 
@@ -391,8 +439,16 @@
 	}
 </script>
 
-<label class={field.className} style:grid-area={field.areaName}>
-	<span data-errMsg="">{field.label}: </span>
+<label class={field.className} style:grid-area={field.areaName} class:has-error={!!error}>
+	<span
+		data-errMsg={validationState === 'success'
+			? ''
+			: displayMessage !== undefined
+				? displayMessage
+				: undefined}
+	>
+		{field.label}:
+	</span>
 	<div class="autocomplete-container">
 		<input
 			type={field.type}
@@ -401,6 +457,7 @@
 			value={inputValue}
 			required={field.required}
 			{disabled}
+			class:error={!!error}
 			oninput={handleInput}
 			onkeydown={handleKeyDown}
 			onfocus={() => {
@@ -422,11 +479,7 @@
 		{#if showSuggestions && searchResults.length > 0}
 			<ul class="suggestions-list" role="listbox">
 				{#each searchResults as result, index}
-					<li
-						role="option"
-						class="suggestion-item"
-						aria-selected={selectedIndex === index}
-					>
+					<li role="option" class="suggestion-item" aria-selected={selectedIndex === index}>
 						<button
 							type="button"
 							class="suggestion-button"
@@ -463,9 +516,20 @@
 		& span {
 			font-size: 0.7em;
 			text-wrap: nowrap;
+			line-height: 1.5rem;
+			height: 1.5rem;
+			display: flex;
+			align-items: center;
 		}
 		& input {
 			appearance: none;
+		}
+		&.has-error {
+			grid-template-rows: 1.5rem 1fr;
+		}
+		& input.error {
+			border-color: var(--color-danger, #c33);
+			border-width: 2px;
 		}
 	}
 
@@ -542,4 +606,3 @@
 		flex: 1;
 	}
 </style>
-

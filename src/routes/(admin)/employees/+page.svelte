@@ -1,12 +1,47 @@
 <script lang="ts">
 	import Search from '$lib/components/Search.svelte';
-	import { employeeData, nationalityData, type Employee } from './data/employeeData';
-
+	import type { PageData } from './$types';
+	import type { Employee } from './types';
 	import Card from './components/card.svelte';
 
-	const employeesData: Employee[] = employeeData;
+	let { data }: { data: PageData } = $props();
+
+	let employeesData = $state<Employee[]>([]);
+	let nationalityData = $state<Array<{ id: number; label: string }>>([]);
 	let isGrouped = $state(true);
 	let isActive = $state(true);
+
+	// 初期データを設定（初回のみ）
+	let initialized = $state(false);
+	$effect(() => {
+		if (!initialized) {
+			employeesData = data.employees || [];
+			nationalityData = data.nationalityData || [];
+			initialized = true;
+		}
+	});
+
+	/**
+	 * 従業員データをAPIから取得
+	 */
+	async function loadData() {
+		if (typeof window === 'undefined') return;
+		try {
+			const response = await fetch(`/employees/api?isActive=${isActive}`);
+			if (response.ok) {
+				employeesData = await response.json();
+			}
+		} catch (error) {
+			console.error('Error loading data:', error);
+		}
+	}
+
+	// isActiveが変更されたときにデータを再読み込み
+	$effect(() => {
+		if (typeof window !== 'undefined') {
+			loadData();
+		}
+	});
 </script>
 
 <div>
@@ -18,9 +53,7 @@
 		<div class="employees-header">
 			<p>従業員一覧</p>
 			<p>
-				{isActive ? '在職中' : '退職者'}の従業員数: {isActive
-					? employeesData.filter((employee) => employee.isActive).length
-					: employeesData.filter((employee) => !employee.isActive).length}
+				{isActive ? '在職中' : '退職者'}の従業員数: {employeesData.length}
 			</p>
 			<div class="employees-header-checkbox">
 				<label class={['checkbox btn', { isGrouped }]}>
@@ -37,22 +70,16 @@
 		{#if isGrouped}
 			{#each nationalityData as nationality}
 				{@const filteredEmployees = employeesData.filter((e) => e.nationality === nationality.id)}
-				{@const displayEmployees = isActive
-					? filteredEmployees.filter((e) => e.isActive)
-					: filteredEmployees.filter((e) => !e.isActive)}
 
-				{#if displayEmployees.length > 0}
+				{#if filteredEmployees.length > 0}
 					<div class="nationality-group">
-						<p>{nationality.label}（{displayEmployees.length}人）</p>
+						<p>{nationality.label}（{filteredEmployees.length}人）</p>
 					</div>
-					<Card employees={displayEmployees} />
+					<Card employees={filteredEmployees} />
 				{/if}
 			{/each}
 		{:else}
-			{@const displayEmployees = isActive 
-				? employeesData.filter((e) => e.isActive) 
-				: employeesData.filter((e) => !e.isActive)}
-			<Card employees={displayEmployees} />
+			<Card employees={employeesData} />
 		{/if}
 	</div>
 </div>

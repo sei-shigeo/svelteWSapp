@@ -1,21 +1,28 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { employeeData, type Employee } from '../../../data/employeeData';
+import type { Employee } from '../../../types';
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, fetch }) => {
 	if (!params.id) {
 		throw error(404, 'Employee not found');
 	}
 
 	const id = parseInt(params.id, 10);
-	const employee = employeeData.find((emp: Employee) => emp.id === id);
-
-	if (!employee) {
-		throw error(404, 'Employee not found');
+	if (isNaN(id)) {
+		throw error(404, 'Invalid employee ID');
 	}
+
+	const response = await fetch(`/employees/api/${id}`);
+	if (!response.ok) {
+		if (response.status === 404) {
+			throw error(404, 'Employee not found');
+		}
+		throw error(500, 'Failed to fetch employee');
+	}
+
+	const employee: Employee = await response.json();
 
 	return {
 		employee
 	};
 };
-

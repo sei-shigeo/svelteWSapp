@@ -86,40 +86,6 @@ export const employeeInfoData: FieldConfig[] = [
 		section: '基本情報',
 		placeholder: '撮影日'
 	},
-	// セキュリティセクション
-	{
-		formType: 'select',
-		className: 'role',
-		areaName: 'role',
-		label: 'ロール',
-		type: 'select',
-		name: 'role_id',
-		section: 'セキュリティ',
-		options: [
-			{ value: '1', label: '管理者', selected: true },
-			{ value: '2', label: '一般' }
-		]
-	},
-	{
-		formType: 'input',
-		className: 'password',
-		areaName: 'password',
-		label: 'パスワード',
-		type: 'password',
-		name: 'password',
-		section: 'セキュリティ',
-		placeholder: 'パスワード'
-	},
-	{
-		formType: 'input',
-		className: 'password_confirm',
-		areaName: 'password_confirm',
-		label: '確認用パスワード',
-		type: 'password',
-		name: 'password_confirm',
-		section: 'セキュリティ',
-		placeholder: '確認用パスワード'
-	},
 	// 名前セクション
 	{
 		formType: 'input',
@@ -232,6 +198,40 @@ export const employeeInfoData: FieldConfig[] = [
 		name: 'address',
 		section: '住まい',
 		placeholder: '住所'
+	},
+	// セキュリティセクション
+	{
+		formType: 'select',
+		className: 'role',
+		areaName: 'role',
+		label: 'ロール',
+		type: 'select',
+		name: 'role_id',
+		section: 'セキュリティ',
+		options: [
+			{ value: '1', label: '管理者', selected: true },
+			{ value: '2', label: '一般' }
+		]
+	},
+	{
+		formType: 'input',
+		className: 'password',
+		areaName: 'password',
+		label: 'パスワード',
+		type: 'password',
+		name: 'password',
+		section: 'セキュリティ',
+		placeholder: 'パスワード'
+	},
+	{
+		formType: 'input',
+		className: 'password_confirm',
+		areaName: 'password_confirm',
+		label: '確認用パスワード',
+		type: 'password',
+		name: 'password_confirm',
+		section: 'セキュリティ',
+		placeholder: '確認用パスワード'
 	}
 ];
 // 緊急連絡先
