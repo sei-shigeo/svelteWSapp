@@ -2,17 +2,22 @@
 	import defaultAvatar from '$lib/assets/images/avatar.png';
 	import Input from './input.svelte';
 	import BankCodeInput from './BankCodeInput.svelte';
+	import PostalCodeInput from './PostalCodeInput.svelte';
+	import GoogleMap from './GoogleMap.svelte';
 	import { detailData } from '../data/detailsData';
 	import Image from './image.svelte';
 	import FormStyles from './FormStyles.svelte';
 	import type { FieldConfig } from '../data/formData';
 	import type { Employee } from '../types';
+	import { env } from '$env/dynamic/public';
 	import {
 		FIELD_TO_EMPLOYEE_MAP,
 		REQUIRED_FIELDS,
-		BANK_ACCOUNT_OWNER_TYPE_EMPLOYEE
+		BANK_ACCOUNT_OWNER_TYPE_EMPLOYEE,
+		STATIC_MASTER_DATA
 	} from '../utils/constants';
 	import { validateField, validateEmployeeRequiredFields } from '../utils/validation';
+	import { onMount } from 'svelte';
 
 	type Props = {
 		mode: 'create' | 'edit';
@@ -24,6 +29,75 @@
 
 	let { mode, employee, isEditing = true, onCancel, formId = 'employee-form' }: Props = $props();
 
+	// マスターデータの型定義
+	type MasterDataItem = { id: number | string | boolean; label: string };
+	type MasterData = {
+		nationality: MasterDataItem[];
+		employeeClassification: MasterDataItem[];
+		department: MasterDataItem[];
+		position: MasterDataItem[];
+		educationType: MasterDataItem[];
+		suitabilityAssessmentType: MasterDataItem[];
+		specialEducationType: MasterDataItem[];
+		healthCheckupType: MasterDataItem[];
+		ownerType: MasterDataItem[];
+		bankAccountType: MasterDataItem[];
+		licenseType: MasterDataItem[];
+		role: MasterDataItem[];
+		gender: MasterDataItem[];
+		bloodType: MasterDataItem[];
+		relationship: MasterDataItem[];
+		qualificationCertificateType: MasterDataItem[];
+		insuranceType: MasterDataItem[];
+		defaultAccount: MasterDataItem[];
+	};
+
+	// マスターデータを保持する状態
+	let masterData = $state<MasterData>({
+		nationality: [],
+		employeeClassification: [],
+		department: [],
+		position: [],
+		educationType: [],
+		suitabilityAssessmentType: [],
+		specialEducationType: [],
+		healthCheckupType: [],
+		ownerType: [],
+		bankAccountType: [],
+		licenseType: [],
+		role: [],
+		gender: STATIC_MASTER_DATA.gender,
+		bloodType: STATIC_MASTER_DATA.bloodType,
+		relationship: STATIC_MASTER_DATA.relationship,
+		qualificationCertificateType: STATIC_MASTER_DATA.qualificationCertificateType,
+		insuranceType: STATIC_MASTER_DATA.insuranceType,
+		defaultAccount: STATIC_MASTER_DATA.defaultAccount
+	});
+
+	// マスターデータをAPIから取得
+	onMount(async () => {
+		try {
+			const response = await fetch('/employees/api/masters');
+			if (response.ok) {
+				const data = await response.json();
+				masterData.nationality = data.nationalityData || [];
+				masterData.employeeClassification = data.employeeClassificationData || [];
+				masterData.department = data.departmentData || [];
+				masterData.position = data.positionData || [];
+				masterData.educationType = data.educationTypeData || [];
+				masterData.suitabilityAssessmentType = data.suitabilityAssessmentTypeData || [];
+				masterData.specialEducationType = data.specialEducationTypeData || [];
+				masterData.healthCheckupType = data.healthCheckupTypeData || [];
+				masterData.ownerType = data.ownerTypeData || [];
+				masterData.bankAccountType = data.bankAccountTypeData || [];
+				masterData.licenseType = data.licenseTypeData || [];
+				masterData.role = data.roleData || [];
+			}
+		} catch (error) {
+			console.error('Failed to load master data:', error);
+		}
+	});
+
 	// タブの状態管理
 	let activeTabIndex = $state(0);
 
@@ -33,9 +107,155 @@
 	// 画像のsrcをリアクティブな変数で管理
 	let employeeImageSrc = $state(defaultAvatar);
 
+	// 撮影日の値を管理
+	let imageAtValue = $state<string>('');
+
 	// パスワードと確認用パスワードの値を追跡
 	let passwordValue = $state<string>('');
 	let passwordConfirmValue = $state<string>('');
+
+	// メールアドレスと確認用メールアドレスの値を追跡
+	let emailValue = $state<string>('');
+	let emailConfirmValue = $state<string>('');
+
+	// 住所の値を追跡（Google Maps表示用）
+	const currentAddress = $derived(() => {
+		return String(employeeFormValues['address'] ?? getEmployeeValue('address') ?? '');
+	});
+
+	// 和暦/西暦の選択状態
+	let dateCalendarType = $state<'seireki' | 'wareki'>('seireki');
+
+	// 和暦の元号定義
+	const eraData = [
+		{ name: '令和', startYear: 2019, startMonth: 5, startDay: 1 },
+		{ name: '平成', startYear: 1989, startMonth: 1, startDay: 8 },
+		{ name: '昭和', startYear: 1926, startMonth: 12, startDay: 25 },
+		{ name: '大正', startYear: 1912, startMonth: 7, startDay: 30 },
+		{ name: '明治', startYear: 1868, startMonth: 1, startDay: 25 }
+	];
+
+	// 西暦から和暦に変換
+	function convertToWareki(year: number, month: number, day: number): { era: string; eraYear: number } | null {
+		const date = new Date(year, month - 1, day);
+		for (const era of eraData) {
+			const eraStart = new Date(era.startYear, era.startMonth - 1, era.startDay);
+			if (date >= eraStart) {
+				const eraYear = year - era.startYear + 1;
+				return { era: era.name, eraYear };
+			}
+		}
+		return null;
+	}
+
+	// 和暦から西暦に変換
+	function convertToSeireki(era: string, eraYear: number, month: number, day: number): string | null {
+		const eraInfo = eraData.find((e) => e.name === era);
+		if (!eraInfo) return null;
+		const seirekiYear = eraInfo.startYear + eraYear - 1;
+		try {
+			const date = new Date(seirekiYear, month - 1, day);
+			if (date.getFullYear() === seirekiYear && date.getMonth() === month - 1 && date.getDate() === day) {
+				return `${seirekiYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+			}
+		} catch {
+			return null;
+		}
+		return null;
+	}
+
+	// 西暦日付を和暦表示に変換
+	function formatToWareki(dateStr: string): string | null {
+		if (!dateStr) return null;
+		try {
+			const [year, month, day] = dateStr.split('-').map(Number);
+			const wareki = convertToWareki(year, month, day);
+			if (wareki) {
+				return `${wareki.era}${wareki.eraYear}年${month}月${day}日`;
+			}
+		} catch {
+			return null;
+		}
+		return null;
+	}
+
+	// 和暦入力値の状態管理
+	let warekiEra = $state<string>('');
+	let warekiYear = $state<string>('');
+	let warekiMonth = $state<string>('');
+	let warekiDay = $state<string>('');
+
+	// 西暦日付から和暦入力値を初期化
+	function initializeWarekiFromSeireki(dateStr: string) {
+		if (!dateStr) {
+			warekiEra = '';
+			warekiYear = '';
+			warekiMonth = '';
+			warekiDay = '';
+			return;
+		}
+		try {
+			const [year, month, day] = dateStr.split('-').map(Number);
+			const wareki = convertToWareki(year, month, day);
+			if (wareki) {
+				warekiEra = wareki.era;
+				warekiYear = String(wareki.eraYear);
+				warekiMonth = String(month);
+				warekiDay = String(day);
+			}
+		} catch {
+			warekiEra = '';
+			warekiYear = '';
+			warekiMonth = '';
+			warekiDay = '';
+		}
+	}
+
+	// 和暦入力値から西暦日付に変換して保存
+	function updateDateFromWareki() {
+		if (warekiEra && warekiYear && warekiMonth && warekiDay) {
+			const seirekiDate = convertToSeireki(
+				warekiEra,
+				Number(warekiYear),
+				Number(warekiMonth),
+				Number(warekiDay)
+			);
+			if (seirekiDate) {
+				updateEmployeeValue('date_of_birth', seirekiDate);
+			}
+		}
+	}
+
+	// 年齢を計算する関数
+	function calculateAge(dateOfBirth: string | undefined): number | null {
+		if (!dateOfBirth) return null;
+		try {
+			const birthDate = new Date(dateOfBirth);
+			const today = new Date();
+			let age = today.getFullYear() - birthDate.getFullYear();
+			const monthDiff = today.getMonth() - birthDate.getMonth();
+			if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+				age--;
+			}
+			return age >= 0 ? age : null;
+		} catch {
+			return null;
+		}
+	}
+
+	// 生年月日から年齢を計算
+	const age = $derived(() => {
+		const dateOfBirth = String(employeeFormValues['date_of_birth'] ?? getEmployeeValue('date_of_birth') ?? '');
+		return calculateAge(dateOfBirth || undefined);
+	});
+
+	// 生年月日の値を監視して和暦入力を初期化
+	$effect(() => {
+		const dateOfBirth = String(employeeFormValues['date_of_birth'] ?? getEmployeeValue('date_of_birth') ?? '');
+		if (dateCalendarType === 'wareki' && dateOfBirth) {
+			initializeWarekiFromSeireki(dateOfBirth);
+		}
+	});
 
 	// 従業員基本情報の値を管理する状態
 	let employeeFormValues: Record<string, string | number | undefined> = $state({});
@@ -64,9 +284,14 @@
 	$effect(() => {
 		if (mode === 'edit' && employee) {
 			employeeImageSrc = employee.image || defaultAvatar;
+			// 撮影日の初期値を設定
+			const imageAtValueFromEmployee = getEmployeeValue('image_at');
+			imageAtValue = imageAtValueFromEmployee ? String(imageAtValueFromEmployee) : '';
 			// パスワードの初期値をクリア（セキュリティのため）
 			passwordValue = '';
 			passwordConfirmValue = '';
+			// メールアドレスの初期値を設定（フォーム値に設定後）
+			emailConfirmValue = '';
 			// 既存の従業員データをフォーム値に設定
 			const employeeInfoDetail = detailData.find((d) => d.className === 'employee-info');
 			if (employeeInfoDetail) {
@@ -74,6 +299,17 @@
 					const value = getEmployeeValue(field.name);
 					if (value !== undefined && value !== null) {
 						employeeFormValues[field.name] = value;
+						// メールアドレスの初期値を設定
+						if (field.name === 'email') {
+							emailValue = String(value);
+						}
+						// 生年月日の初期値を設定（和暦入力も初期化）
+						if (field.name === 'date_of_birth') {
+							const dateStr = String(value);
+							if (dateCalendarType === 'wareki') {
+								initializeWarekiFromSeireki(dateStr);
+							}
+						}
 					}
 				});
 			}
@@ -97,11 +333,41 @@
 			}
 		} else if (mode === 'create') {
 			// 作成モードでも初期値をクリア
+			imageAtValue = '';
 			passwordValue = '';
 			passwordConfirmValue = '';
+			emailValue = '';
+			emailConfirmValue = '';
 			employeeFormValues = {};
 		}
 	});
+
+	// フィールド名からマスターデータの選択肢を取得
+	function getOptionsForField(fieldName: string): MasterDataItem[] {
+		const fieldMap: Record<string, keyof MasterData> = {
+			nationality_id: 'nationality',
+			gender_id: 'gender',
+			blood_type_id: 'bloodType',
+			role_id: 'role',
+			employment_type_id: 'employeeClassification',
+			department_id: 'department',
+			position_id: 'position',
+			license_type_id: 'licenseType',
+			qualification_certificate_type_id: 'qualificationCertificateType',
+			insurance_type_id: 'insuranceType',
+			education_type_id: 'educationType',
+			health_checkup_type_id: 'healthCheckupType',
+			suitability_assessment_type_id: 'suitabilityAssessmentType',
+			special_education_type_id: 'specialEducationType',
+			owner_type_id: 'ownerType',
+			account_type: 'bankAccountType',
+			default_account: 'defaultAccount',
+			relationship_contact: 'relationship'
+		};
+
+		const key = fieldMap[fieldName];
+		return key ? masterData[key] : [];
+	}
 
 	// エントリのtypeフィールドのラベルを取得
 	function getEntryTypeLabel(entryFields: FieldConfig[], entryIndex: number): string | null {
@@ -125,18 +391,19 @@
 					field.name.includes('relationship') ||
 					field.name === 'type')
 		);
-		if (!typeField || !typeField.options) return null;
+		if (!typeField) return null;
 
 		// 現在の値を取得（フォームの入力値から）
 		const currentValue = getEntryFieldValue(entryIndex, typeField.name);
+		const options = getOptionsForField(typeField.name);
+
 		if (currentValue === undefined) {
-			// デフォルト値（selected: true）を探す
-			const defaultOption = typeField.options.find((opt) => opt.selected);
-			return defaultOption?.label || null;
+			// デフォルト値（最初の選択肢）を返す
+			return options[0]?.label || null;
 		}
 
 		// 現在の値に対応するラベルを探す
-		const selectedOption = typeField.options.find((opt) => opt.value === String(currentValue));
+		const selectedOption = options.find((opt) => String(opt.id) === String(currentValue));
 		return selectedOption?.label || null;
 	}
 
@@ -250,6 +517,38 @@
 	const passwordMismatch = $derived(
 		passwordValue !== '' && passwordConfirmValue !== '' && passwordValue !== passwordConfirmValue
 	);
+
+	// メールアドレス確認のバリデーション
+	const emailMismatch = $derived(
+		emailValue !== '' && emailConfirmValue !== '' && emailValue !== emailConfirmValue
+	);
+
+	// 現在選択されている国籍IDを取得
+	const currentNationalityId = $derived(() => {
+		const nationalityValue = employeeFormValues['nationality_id'] ?? getEmployeeValue('nationality_id');
+		return nationalityValue ? Number(nationalityValue) : undefined;
+	});
+
+	// フィールドが表示されるかどうかを判定
+	function shouldShowField(field: FieldConfig): boolean {
+		// ミドルネーム、ミドルネーム(カナ)は国籍が日本でない時だけ表示
+		if (field.name === 'middle_name' || field.name === 'middle_name_kana') {
+			const nationalityId = currentNationalityId();
+			// 国籍IDが1（日本）でない場合のみ表示
+			return nationalityId !== undefined && nationalityId !== 1;
+		}
+		return true;
+	}
+
+	// セクションが表示されるかどうかを判定
+	function shouldShowSection(sectionName: string): boolean {
+		// 解任情報、退職情報、死亡情報は編集画面でのみ表示
+		if (sectionName === '解任情報' || sectionName === '退職情報' || sectionName === '死亡情報') {
+			// isEditingがfalse（編集モード）の時のみ表示
+			return !isEditing;
+		}
+		return true;
+	}
 
 	// フォーム送信状態
 	let isSubmitting = $state(false);
@@ -436,6 +735,14 @@
 			formDataObj.password = passwordValue;
 		}
 
+		// 撮影日
+		if (imageAtValue) {
+			const employeeKey = fieldToEmployeeMap['image_at'];
+			if (employeeKey) {
+				formDataObj[employeeKey as keyof Employee] = imageAtValue as any;
+			}
+		}
+
 		// 画像データ（DataURLがデフォルトアバターでない場合、または編集モードで画像が変更された場合）
 		if (employeeImageSrc && employeeImageSrc !== defaultAvatar) {
 			// DataURL（base64）の場合はそのまま保存
@@ -463,6 +770,12 @@
 		// パスワード確認
 		if (passwordValue && passwordValue !== passwordConfirmValue) {
 			submitError = 'パスワードが一致しません';
+			return;
+		}
+
+		// メールアドレス確認
+		if (emailValue && emailValue !== emailConfirmValue) {
+			submitError = 'メールアドレスが一致しません';
 			return;
 		}
 
@@ -624,7 +937,15 @@
 							</legend>
 							<div class={['content-area', activeDetail.className]}>
 								{#if activeDetail.className === 'employee-info' && entryIndex === 0}
-									<Image bind:employeeImageSrc disabled={!canEdit} />
+									<Image
+										bind:employeeImageSrc
+										disabled={!canEdit}
+										bind:imageAt={imageAtValue}
+										onImageAtChange={(value) => {
+											imageAtValue = value;
+											updateEmployeeValue('image_at', value);
+										}}
+									/>
 								{/if}
 								{#each entryFields as field}
 									{#if activeDetail.className === 'bank-account-info' && field.name === 'owner_type_id'}
@@ -666,6 +987,7 @@
 											field.name === 'owner_type_id'
 												? BANK_ACCOUNT_OWNER_TYPE_EMPLOYEE
 												: getEntryFieldValue(entryIndex, field.name)}
+											options={getOptionsForField(field.name)}
 											oninput={(e) => {
 												const target = e.target as HTMLInputElement | HTMLSelectElement;
 												updateEntryFieldValue(entryIndex, field.name, target.value);
@@ -711,19 +1033,29 @@
 							'住まい': 'address'
 						}}
 						{#each Object.entries(groupedFields) as [sectionName, fields]}
-							<fieldset class="sub-section">
-								<legend class="sub-section-title">{sectionName}</legend>
-								<div
-									class={[
-										'content-area',
-										activeDetail.className,
-										`sub-section-${sectionClassMap[sectionName] || 'other'}`
-									]}
-								>
-									{#if activeDetail.className === 'employee-info' && sectionName === '基本情報'}
-										<Image bind:employeeImageSrc disabled={!canEdit} />
-									{/if}
-									{#each fields as field}
+							{#if shouldShowSection(sectionName)}
+								<fieldset class="sub-section">
+									<legend class="sub-section-title">{sectionName}</legend>
+									<div
+										class={[
+											'content-area',
+											activeDetail.className,
+											`sub-section-${sectionClassMap[sectionName] || 'other'}`
+										]}
+									>
+										{#if activeDetail.className === 'employee-info' && sectionName === '基本情報'}
+											<Image
+												bind:employeeImageSrc
+												disabled={!canEdit}
+												bind:imageAt={imageAtValue}
+												onImageAtChange={(value) => {
+													imageAtValue = value;
+													updateEmployeeValue('image_at', value);
+												}}
+											/>
+										{/if}
+										{#each fields as field}
+											{#if shouldShowField(field) && field.name !== 'image_at'}
 										{#if field.name === 'password'}
 											<label class={field.className} style:grid-area={field.areaName}>
 												<span>{field.label}: </span>
@@ -765,8 +1097,51 @@
 													}}
 												/>
 											</label>
-										{:else}
-											<Input
+										{:else if field.name === 'email'}
+											<label class={field.className} style:grid-area={field.areaName}>
+												<span>{field.label}: </span>
+												<input
+													type={field.type}
+													name={field.name}
+													placeholder={field.placeholder}
+													value={emailValue || String(employeeFormValues[field.name] ?? getEmployeeValue(field.name) ?? '')}
+													required={field.required}
+													disabled={!canEdit}
+													oninput={(e) => {
+														const target = e.target as HTMLInputElement;
+														emailValue = target.value;
+														updateEmployeeValue(field.name, target.value);
+													}}
+												/>
+											</label>
+										{:else if field.name === 'email_confirm'}
+											<label
+												class={field.className}
+												style:grid-area={field.areaName}
+												class:has-error={emailMismatch}
+											>
+												<span
+													data-errMsg={emailMismatch ? 'メールアドレスが一致しません' : undefined}
+												>
+													{field.label}:
+												</span>
+												<input
+													type={field.type}
+													name={field.name}
+													placeholder={field.placeholder}
+													value={emailConfirmValue}
+													required={field.required}
+													disabled={!canEdit}
+													class:error={emailMismatch}
+													oninput={(e) => {
+														const target = e.target as HTMLInputElement;
+														emailConfirmValue = target.value;
+													}}
+												/>
+											</label>
+										{:else if field.name === 'postal_code'}
+											<!-- 郵便番号入力は専用コンポーネントを使用 -->
+											<PostalCodeInput
 												{field}
 												disabled={!canEdit}
 												value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
@@ -777,30 +1152,234 @@
 													const target = e.target as HTMLInputElement | HTMLSelectElement;
 													updateEmployeeValue(field.name, target.value);
 												}}
+												onAddressChange={(address) => {
+													// 住所フィールドに自動入力
+													updateEmployeeValue('address', address);
+												}}
+											/>
+										{:else if field.name === 'date_of_birth'}
+											<!-- 生年月日フィールドと年齢表示 -->
+											<label class={field.className} style:grid-area={field.areaName}>
+												<div class="date-of-birth-label-wrapper">
+													<span>{field.label}: </span>
+													<div class="calendar-type-selector">
+														<button
+															type="button"
+															class="calendar-type-btn"
+															class:active={dateCalendarType === 'seireki'}
+															disabled={!canEdit}
+															onclick={() => {
+																dateCalendarType = 'seireki';
+															}}
+														>
+															西暦
+														</button>
+														<button
+															type="button"
+															class="calendar-type-btn"
+															class:active={dateCalendarType === 'wareki'}
+															disabled={!canEdit}
+															onclick={() => {
+																dateCalendarType = 'wareki';
+																const currentDate = String(employeeFormValues[field.name] ?? getEmployeeValue(field.name) ?? '');
+																initializeWarekiFromSeireki(currentDate);
+															}}
+														>
+															和暦
+														</button>
+													</div>
+												</div>
+												<div class="date-of-birth-input-wrapper">
+													{#if dateCalendarType === 'seireki'}
+														<div class="date-of-birth-wrapper">
+															<input
+																type={field.type}
+																name={field.name}
+																placeholder={field.placeholder}
+																value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
+																required={field.required}
+																disabled={!canEdit}
+																oninput={(e) => {
+																	const target = e.target as HTMLInputElement;
+																	updateEmployeeValue(field.name, target.value);
+																}}
+															/>
+															{#if age() !== null}
+																<span class="age-display">{age()}歳</span>
+															{/if}
+														</div>
+													{:else}
+														<div class="wareki-input-wrapper">
+															<select
+																name="wareki_era"
+																disabled={!canEdit}
+																bind:value={warekiEra}
+																onchange={updateDateFromWareki}
+																class="wareki-era-select"
+															>
+																<option value="">元号</option>
+																{#each eraData as era}
+																	<option value={era.name}>{era.name}</option>
+																{/each}
+															</select>
+															<input
+																type="number"
+																name="wareki_year"
+																placeholder="年"
+																min="1"
+																max="100"
+																disabled={!canEdit}
+																bind:value={warekiYear}
+																oninput={updateDateFromWareki}
+																class="wareki-year-input"
+															/>
+															<span class="wareki-unit">年</span>
+															<input
+																type="number"
+																name="wareki_month"
+																placeholder="月"
+																min="1"
+																max="12"
+																disabled={!canEdit}
+																bind:value={warekiMonth}
+																oninput={updateDateFromWareki}
+																class="wareki-month-input"
+															/>
+															<span class="wareki-unit">月</span>
+															<input
+																type="number"
+																name="wareki_day"
+																placeholder="日"
+																min="1"
+																max="31"
+																disabled={!canEdit}
+																bind:value={warekiDay}
+																oninput={updateDateFromWareki}
+																class="wareki-day-input"
+															/>
+															<span class="wareki-unit">日</span>
+															{#if age() !== null}
+																<span class="age-display">{age()}歳</span>
+															{/if}
+														</div>
+													{/if}
+												</div>
+											</label>
+										{:else if field.name === 'address' && sectionName === '住まい'}
+											<!-- 住所フィールドとGoogle Mapsを表示 -->
+											<Input
+												{field}
+												disabled={!canEdit}
+												value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
+												error={fieldErrors[field.name]}
+												validationState={getFieldValidationState(field.name)}
+												displayMessage={getFieldDisplayMessage(field.name)}
+												options={getOptionsForField(field.name)}
+												oninput={(e) => {
+													const target = e.target as HTMLInputElement | HTMLSelectElement;
+													updateEmployeeValue(field.name, target.value);
+												}}
+											/>
+											<!-- Google Mapsで住所を表示 -->
+											{#if currentAddress()}
+												<div style:grid-area="map" class="google-map-wrapper">
+													<GoogleMap address={currentAddress()} apiKey={env.PUBLIC_GOOGLE_MAPS_API_KEY} />
+												</div>
+											{/if}
+										{:else}
+											<Input
+												{field}
+												disabled={!canEdit}
+												value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
+												error={fieldErrors[field.name]}
+												validationState={getFieldValidationState(field.name)}
+												displayMessage={getFieldDisplayMessage(field.name)}
+												options={getOptionsForField(field.name)}
+												oninput={(e) => {
+													const target = e.target as HTMLInputElement | HTMLSelectElement;
+													updateEmployeeValue(field.name, target.value);
+												}}
 											/>
 										{/if}
-									{/each}
-								</div>
-							</fieldset>
+											{/if}
+										{/each}
+									</div>
+								</fieldset>
+							{/if}
 						{/each}
 					{:else}
 						<div class={['content-area', activeDetail.className]}>
 							{#if activeDetail.className === 'employee-info'}
-								<Image bind:employeeImageSrc disabled={!canEdit} />
-							{/if}
-							{#each activeDetail.fields as field}
-								<Input
-									{field}
+								<Image
+									bind:employeeImageSrc
 									disabled={!canEdit}
-									value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
-									error={fieldErrors[field.name]}
-									validationState={getFieldValidationState(field.name)}
-									displayMessage={getFieldDisplayMessage(field.name)}
-									oninput={(e) => {
-										const target = e.target as HTMLInputElement | HTMLSelectElement;
-										updateEmployeeValue(field.name, target.value);
+									bind:imageAt={imageAtValue}
+									onImageAtChange={(value) => {
+										imageAtValue = value;
+										updateEmployeeValue('image_at', value);
 									}}
 								/>
+							{/if}
+							{#each activeDetail.fields as field}
+								{#if shouldShowField(field) && field.name !== 'image_at'}
+									{#if field.name === 'email'}
+										<label class={field.className} style:grid-area={field.areaName}>
+											<span>{field.label}: </span>
+											<input
+												type={field.type}
+												name={field.name}
+												placeholder={field.placeholder}
+												value={emailValue || (employeeFormValues[field.name] ?? getEmployeeValue(field.name))}
+												required={field.required}
+												disabled={!canEdit}
+												oninput={(e) => {
+													const target = e.target as HTMLInputElement;
+													emailValue = target.value;
+													updateEmployeeValue(field.name, target.value);
+												}}
+											/>
+										</label>
+									{:else if field.name === 'email_confirm'}
+										<label
+											class={field.className}
+											style:grid-area={field.areaName}
+											class:has-error={emailMismatch}
+										>
+											<span
+												data-errMsg={emailMismatch ? 'メールアドレスが一致しません' : undefined}
+											>
+												{field.label}:
+											</span>
+											<input
+												type={field.type}
+												name={field.name}
+												placeholder={field.placeholder}
+												value={emailConfirmValue}
+												required={field.required}
+												disabled={!canEdit}
+												class:error={emailMismatch}
+												oninput={(e) => {
+													const target = e.target as HTMLInputElement;
+													emailConfirmValue = target.value;
+												}}
+											/>
+										</label>
+									{:else}
+										<Input
+											{field}
+											disabled={!canEdit}
+											value={employeeFormValues[field.name] ?? getEmployeeValue(field.name)}
+											error={fieldErrors[field.name]}
+											validationState={getFieldValidationState(field.name)}
+											displayMessage={getFieldDisplayMessage(field.name)}
+											options={getOptionsForField(field.name)}
+											oninput={(e) => {
+												const target = e.target as HTMLInputElement | HTMLSelectElement;
+												updateEmployeeValue(field.name, target.value);
+											}}
+										/>
+									{/if}
+								{/if}
 							{/each}
 						</div>
 					{/if}

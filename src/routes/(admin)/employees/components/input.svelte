@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { FieldConfig } from '../data/formData';
+
+	type MasterDataItem = { id: number | string | boolean; label: string };
+
 	let {
 		field,
 		value,
@@ -7,7 +10,8 @@
 		error,
 		validationState,
 		displayMessage,
-		oninput
+		oninput,
+		options = []
 	}: {
 		field: FieldConfig;
 		value?: string | number;
@@ -16,6 +20,7 @@
 		validationState?: 'error' | 'success' | 'required' | null;
 		displayMessage?: string;
 		oninput?: (e: Event) => void;
+		options?: MasterDataItem[];
 	} = $props();
 
 	const displayValue = $derived(
@@ -198,10 +203,10 @@
 			{field.label}:
 		</span>
 		<select name={field.name} required {disabled} class:error={!!error} {oninput}>
-			{#each field.options as option}
+			{#each options as option, index}
 				<option
-					value={option.value}
-					selected={value !== undefined ? String(value) === option.value : option.selected}
+					value={option.id}
+					selected={value !== undefined ? String(value) === String(option.id) : index === 0}
 				>
 					{option.label}
 				</option>

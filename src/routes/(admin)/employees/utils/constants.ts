@@ -67,3 +67,42 @@ export const BANK_ACCOUNT_OWNER_TYPE_EMPLOYEE = 3;
 export const DEFAULT_EMPLOYEE_STATUS = {
 	isActive: true
 } as const;
+
+/**
+ * 固定値のマスターデータ
+ * データベースにマスターテーブルが存在しない固定値
+ */
+export const STATIC_MASTER_DATA = {
+	gender: [
+		{ id: 1, label: '男性' },
+		{ id: 2, label: '女性' }
+	],
+	bloodType: [
+		{ id: 1, label: 'A' },
+		{ id: 2, label: 'B' },
+		{ id: 3, label: 'O' },
+		{ id: 4, label: 'AB' }
+	],
+	relationship: [
+		{ id: 1, label: '父' },
+		{ id: 2, label: '母' },
+		{ id: 3, label: '兄弟' },
+		{ id: 4, label: '友人' },
+		{ id: 5, label: 'その他' }
+	],
+	qualificationCertificateType: [
+		{ id: 1, label: 'フォークリフト' },
+		{ id: 2, label: '玉掛け' },
+		{ id: 3, label: '5トン未満クレーン' }
+	],
+	insuranceType: [
+		{ id: 1, label: '健康保険' },
+		{ id: 2, label: '厚生年金' },
+		{ id: 3, label: '雇用保険' },
+		{ id: 4, label: 'その他' }
+	],
+	defaultAccount: [
+		{ id: false, label: 'いいえ' },
+		{ id: true, label: 'はい' }
+	]
+} as const;

@@ -167,7 +167,7 @@ export const employee = pgTable('employee', {
 	employment_type_id: integer('employment_type_id').references(() => employeeClassification.id), // 雇用形態ID（外部キー）
 	department_id: integer('department_id').references(() => department.id), // 部門ID（外部キー）
 	position_id: integer('position_id').references(() => position.id), // 役職ID（外部キー）
-	hire_at: date('hire_at'), // 雇用日
+	hire_at: date('hire_at'), // 雇用年月日
 	// ドライバー関連
 	appointment_at: date('appointment_at'), // 選任日（ドライバー）
 	discharge_at: date('discharge_at'), // 解任日（ドライバー）

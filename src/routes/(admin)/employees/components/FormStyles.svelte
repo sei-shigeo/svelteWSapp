@@ -195,11 +195,11 @@
 	/* 基本情報サブセクション */
 	:global(.form-container .sub-section-basic) {
 		grid-template-areas:
-			'img code nationality .'
-			'img gender blood_type date_of_birth'
-			'img image_at . .';
-		grid-template-columns: 200px repeat(3, 1fr);
-		grid-template-rows: repeat(3, 70px);
+			'img code nationality '
+			'img gender blood_type '
+			'img date_of_birth .';
+		grid-template-columns: 225px repeat(3, 1fr);
+		grid-template-rows: 70px 70px 1fr;
 	}
 
 	/* セキュリティサブセクション */
@@ -221,16 +221,47 @@
 
 	/* 連絡先サブセクション */
 	:global(.form-container .sub-section-contact) {
-		grid-template-areas: 'phone_mobile phone_tel email';
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: 70px;
+		grid-template-areas:
+			'phone_mobile phone_tel . .'
+			'email email email_confirm email_confirm';
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: 70px 70px;
+	}
+
+	/* 連絡先セクションのlabelスタイルを統一 */
+	:global(.form-container .sub-section-contact label) {
+		display: grid;
+		gap: var(--spacing-xs);
+		grid-template-rows: 1.5rem 1fr;
+		min-height: 70px;
+		align-content: start;
+		& span {
+			font-size: 0.7em;
+			text-wrap: nowrap;
+			line-height: 1.5rem;
+			height: 1.5rem;
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	:global(.form-container .sub-section-contact label.has-error) {
+		grid-template-rows: 1.5rem 1fr auto;
+	}
+
+	/* Google Mapsラッパー */
+	:global(.form-container .google-map-wrapper) {
+		width: 100%;
+		grid-column: 1 / -1;
 	}
 
 	/* 住まいサブセクション */
 	:global(.form-container .sub-section-address) {
-		grid-template-areas: 'p_code address address';
+		grid-template-areas:
+			'p_code address address'
+			'map map map';
 		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: 70px;
+		grid-template-rows: 70px auto;
 	}
 
 	/* 画像関連のグローバルスタイル */
@@ -238,19 +269,8 @@
 		position: relative;
 		width: 100%;
 		align-self: start;
-	}
-
-	:global(.form-container .employee-info .image-label) {
-		font-size: 0.7em;
-		text-wrap: nowrap;
-		height: 1.5rem;
-		line-height: 1.5rem;
-		padding-left: 8px;
-	}
-
-	:global(.form-container .employee-info .employee-image) {
-		width: 100%;
-		border: 1px solid var(--color-border);
+		grid-row: span 2;
+		height: 100%;
 	}
 
 	/* 無効化された入力 */
@@ -297,7 +317,7 @@
 	:global(.form-container .sub-section-employment) {
 		grid-template-areas:
 			'type department position'
-			'hire_date hire_date .';
+			'hire_date appointment_at .';
 		grid-template-columns: repeat(3, 1fr);
 		grid-template-rows: repeat(2, 70px);
 	}
@@ -482,6 +502,231 @@
 	:global(.error) {
 		padding: var(--spacing-md);
 		text-align: center;
+	}
+
+	/* 生年月日フィールドのlabelを横並びに */
+	:global(.form-container .date_of_birth) {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1.5rem 1fr;
+		gap: var(--spacing-xs);
+		align-items: start;
+		min-height: 70px;
+	}
+
+	:global(.form-container .date_of_birth .date-of-birth-label-wrapper) {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	:global(.form-container .date_of_birth .date-of-birth-label-wrapper span) {
+		font-size: 0.7em;
+		text-wrap: nowrap;
+		line-height: 1.5rem;
+		height: 1.5rem;
+		display: flex;
+		align-items: center;
+	}
+
+	:global(.form-container .date_of_birth .date-of-birth-input-wrapper) {
+		width: 100%;
+		grid-column: 1;
+		grid-row: 2;
+	}
+
+	/* カレンダータイプ選択ボタン */
+	:global(.form-container .calendar-type-selector) {
+		display: inline-flex;
+		gap: 0;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		overflow: hidden;
+		background-color: var(--color-bg-muted);
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+		flex-shrink: 0;
+	}
+
+	:global(.form-container .calendar-type-btn) {
+		padding: 4px 12px;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		color: var(--color-text-muted);
+		font-size: 0.75em;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		position: relative;
+		border-right: 1px solid var(--color-border);
+	}
+
+	:global(.form-container .calendar-type-btn:last-child) {
+		border-right: none;
+	}
+
+	:global(.form-container .calendar-type-btn:hover:not(:disabled)) {
+		background-color: var(--color-bg);
+		color: var(--color-text);
+	}
+
+	:global(.form-container .calendar-type-btn.active) {
+		background-color: var(--color-primary);
+		color: var(--color-white);
+		font-weight: 600;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+
+	:global(.form-container .calendar-type-btn.active:first-child) {
+		border-top-left-radius: var(--radius);
+		border-bottom-left-radius: var(--radius);
+	}
+
+	:global(.form-container .calendar-type-btn.active:last-child) {
+		border-top-right-radius: var(--radius);
+		border-bottom-right-radius: var(--radius);
+	}
+
+	:global(.form-container .calendar-type-btn:disabled) {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	/* 生年月日フィールドのラッパー */
+	:global(.form-container .date-of-birth-wrapper) {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		width: 100%;
+	}
+
+	:global(.form-container .date-of-birth-wrapper input) {
+		flex: 1;
+		min-width: 0;
+	}
+
+	/* 和暦入力ラッパー */
+	:global(.form-container .wareki-input-wrapper) {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		width: 100%;
+		flex-wrap: nowrap;
+	}
+
+	:global(.form-container .wareki-era-select) {
+		padding: 8px 10px;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		background-color: var(--color-bg);
+		color: var(--color-text);
+		font-size: 0.85em;
+		font-weight: 500;
+		min-width: 90px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	:global(.form-container .wareki-era-select:hover:not(:disabled)) {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+	}
+
+	:global(.form-container .wareki-era-select:focus) {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+	}
+
+	:global(.form-container .wareki-era-select:disabled) {
+		background-color: var(--color-white);
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	:global(.form-container .wareki-year-input),
+	:global(.form-container .wareki-month-input),
+	:global(.form-container .wareki-day-input) {
+		padding: 8px 10px;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		background-color: var(--color-bg);
+		color: var(--color-text);
+		font-size: 0.85em;
+		width: 65px;
+		text-align: center;
+		transition: all 0.2s ease;
+	}
+
+	:global(.form-container .wareki-year-input:hover:not(:disabled)),
+	:global(.form-container .wareki-month-input:hover:not(:disabled)),
+	:global(.form-container .wareki-day-input:hover:not(:disabled)) {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+	}
+
+	:global(.form-container .wareki-year-input:focus),
+	:global(.form-container .wareki-month-input:focus),
+	:global(.form-container .wareki-day-input:focus) {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+	}
+
+	:global(.form-container .wareki-year-input:disabled),
+	:global(.form-container .wareki-month-input:disabled),
+	:global(.form-container .wareki-day-input:disabled) {
+		background-color: var(--color-white);
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	:global(.form-container .wareki-unit) {
+		font-size: 0.85em;
+		color: var(--color-text-muted);
+		font-weight: 500;
+		margin: 0 2px;
+		user-select: none;
+	}
+
+	/* 年齢表示のスタイル改善 */
+	:global(.form-container .age-display) {
+		font-size: 0.95em;
+		color: var(--color-white);
+		font-weight: 700;
+		white-space: nowrap;
+		padding: 8px 16px;
+		background: linear-gradient(
+			135deg,
+			var(--color-primary),
+			color-mix(in srgb, var(--color-primary) 85%, #0052cc)
+		);
+		border-radius: calc(var(--radius) + 2px);
+		box-shadow:
+			0 2px 6px rgba(0, 0, 0, 0.2),
+			0 1px 2px rgba(0, 0, 0, 0.1);
+		letter-spacing: 0.5px;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		transition: all 0.2s ease;
+	}
+
+	/* 西暦入力時の年齢表示（右端に配置） */
+	:global(.form-container .date-of-birth-wrapper .age-display) {
+		margin-left: auto;
+	}
+
+	/* 和暦入力時の年齢表示（「日」の横に配置） */
+	:global(.form-container .wareki-input-wrapper .age-display) {
+		margin-left: 0;
+	}
+
+	:global(.form-container .age-display:hover) {
+		transform: translateY(-1px);
+		box-shadow:
+			0 3px 8px rgba(0, 0, 0, 0.25),
+			0 1px 3px rgba(0, 0, 0, 0.15);
 	}
 
 	/* 印刷時にヘッダーを非表示 */
