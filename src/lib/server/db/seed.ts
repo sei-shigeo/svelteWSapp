@@ -23,8 +23,10 @@ if (!DATABASE_URL) {
 	throw new Error('DATABASE_URL環境変数が設定されていません');
 }
 
-// シード用のDB接続を作成
-const client = postgres(DATABASE_URL);
+// シード用のDB接続を作成（Supabase対応）
+const client = postgres(DATABASE_URL, {
+	prepare: false // Supabase Transaction mode (port 6543) では必須
+});
 const db = drizzle(client, { schema });
 
 // ============================================

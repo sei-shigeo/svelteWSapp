@@ -1,5 +1,6 @@
 <script lang="ts">
-	import defaultAvatar from '$lib/assets/images/avatar.png';
+	// 画像は静的パスで参照（SSRエラー回避）
+	const defaultAvatar = '/images/avatar.png';
 	import Input from './input.svelte';
 	import BankCodeInput from './BankCodeInput.svelte';
 	import PostalCodeInput from './PostalCodeInput.svelte';
@@ -66,12 +67,12 @@
 		bankAccountType: [],
 		licenseType: [],
 		role: [],
-		gender: STATIC_MASTER_DATA.gender,
-		bloodType: STATIC_MASTER_DATA.bloodType,
-		relationship: STATIC_MASTER_DATA.relationship,
-		qualificationCertificateType: STATIC_MASTER_DATA.qualificationCertificateType,
-		insuranceType: STATIC_MASTER_DATA.insuranceType,
-		defaultAccount: STATIC_MASTER_DATA.defaultAccount
+		gender: [...STATIC_MASTER_DATA.gender],
+		bloodType: [...STATIC_MASTER_DATA.bloodType],
+		relationship: [...STATIC_MASTER_DATA.relationship],
+		qualificationCertificateType: [...STATIC_MASTER_DATA.qualificationCertificateType],
+		insuranceType: [...STATIC_MASTER_DATA.insuranceType],
+		defaultAccount: [...STATIC_MASTER_DATA.defaultAccount]
 	});
 
 	// マスターデータをAPIから取得

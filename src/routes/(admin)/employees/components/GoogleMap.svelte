@@ -3,9 +3,11 @@
 	interface GoogleMaps {
 		Map: new (element: HTMLElement, options?: any) => any;
 		Geocoder: new () => any;
-		Marker: new (options?: any) => any;
 		GeocoderStatus: {
 			OK: string;
+		};
+		marker: {
+			AdvancedMarkerElement: new (options?: any) => any;
 		};
 	}
 
@@ -13,11 +15,8 @@
 		maps: GoogleMaps;
 	}
 
-	declare global {
-		interface Window {
-			google?: Google;
-		}
-	}
+	// Window型を拡張したローカル型
+	type WindowWithGoogle = Window & { google?: Google };
 
 	type Props = {
 		address?: string;
@@ -33,13 +32,13 @@
 
 	// Google Maps APIを読み込む
 	async function loadGoogleMapsAPI(): Promise<void> {
-		if (window.google?.maps) {
+		if ((window as WindowWithGoogle).google?.maps) {
 			return;
 		}
 
 		return new Promise((resolve, reject) => {
 			const script = document.createElement('script');
-			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey || ''}&libraries=places&language=ja`;
+			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey || ''}&libraries=places,marker&language=ja`;
 			script.async = true;
 			script.defer = true;
 			script.onload = () => resolve();
@@ -55,7 +54,8 @@
 		try {
 			await loadGoogleMapsAPI();
 
-			if (!window.google?.maps) {
+			const googleApi = (window as WindowWithGoogle).google;
+			if (!googleApi?.maps) {
 				console.error('Google Maps APIが読み込まれていません');
 				return;
 			}
@@ -63,10 +63,11 @@
 			// 地図の初期位置（日本）
 			const defaultCenter = { lat: 35.6812, lng: 139.7671 };
 
-			// 地図を作成
-			mapInstance = new window.google.maps.Map(mapContainer, {
+			// 地図を作成（mapIdはAdvancedMarkerElementに必要）
+			mapInstance = new googleApi.maps.Map(mapContainer, {
 				center: defaultCenter,
 				zoom: 15,
+				mapId: 'DEMO_MAP_ID', // AdvancedMarkerElement用のMap ID
 				disableDefaultUI: false,
 				zoomControl: true,
 				mapTypeControl: true,
@@ -77,7 +78,7 @@
 			});
 
 			// Geocoderを初期化
-			geocoder = new window.google.maps.Geocoder();
+			geocoder = new googleApi.maps.Geocoder();
 
 			// 住所が指定されている場合は地図を更新
 			if (address) {
@@ -100,11 +101,11 @@
 
 				// 既存のマーカーを削除
 				if (marker) {
-					marker.setMap(null);
+					marker.map = null;
 				}
 
-				// 新しいマーカーを追加
-				marker = new window.google.maps.Marker({
+				// 新しいAdvancedMarkerElementを追加
+				marker = new (window as WindowWithGoogle).google!.maps.marker.AdvancedMarkerElement({
 					map: mapInstance,
 					position: location,
 					title: addressString

@@ -39,7 +39,7 @@
 	}
 
 	// 電話をかける
-	function handleCall(phoneNumber?: string) {
+	function handleCall(phoneNumber?: string | null) {
 		if (!phoneNumber) {
 			alert('電話番号が登録されていません');
 			return;
@@ -48,7 +48,7 @@
 	}
 
 	// メールを送信
-	function handleEmail(email?: string) {
+	function handleEmail(email?: string | null) {
 		if (!email) {
 			alert('メールアドレスが登録されていません');
 			return;
@@ -57,7 +57,7 @@
 	}
 
 	// LINEで連絡（電話番号をクリップボードにコピー）
-	async function handleLine(phoneNumber?: string) {
+	async function handleLine(phoneNumber?: string | null) {
 		if (!phoneNumber) {
 			alert('電話番号が登録されていません');
 			return;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { FieldConfig } from '../data/formData';
-	import { PUBLIC_BANKCODEJP_API_KEY } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 
 	type Props = {
 		field: FieldConfig;
@@ -58,8 +58,8 @@
 
 		isLoading = true;
 		try {
-			// BankCodeJP API v3を使用
-			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
+		// BankCodeJP API v3を使用
+		const apiKey = env.PUBLIC_BANKCODEJP_API_KEY || '';
 			if (!apiKey) {
 				console.warn('BankCodeJP APIキーが設定されていません');
 			}
@@ -119,8 +119,8 @@
 
 		isLoading = true;
 		try {
-			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
-			// v3の支店曖昧検索APIを使用
+		const apiKey = env.PUBLIC_BANKCODEJP_API_KEY || '';
+		// v3の支店曖昧検索APIを使用
 			const response = await fetch(
 				`https://apis.bankcode-jp.com/v3/branches/search?bankCode=${encodeURIComponent(bankCode)}&q=${encodeURIComponent(branchQuery)}&limit=10`,
 				{
@@ -172,15 +172,15 @@
 		if (!code || code.length < 4) return null;
 
 		try {
-			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
-			if (!apiKey) {
-				console.error(
-					'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
-				);
-				return null;
-			}
+		const apiKey = env.PUBLIC_BANKCODEJP_API_KEY || '';
+		if (!apiKey) {
+			console.error(
+				'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
+			);
+			return null;
+		}
 
-			// v3の金融機関個別取得APIを使用（/v3/banks/{code}）
+		// v3の金融機関個別取得APIを使用（/v3/banks/{code}）
 			// まず個別取得APIを試す
 			let url = `https://apis.bankcode-jp.com/v3/banks/${encodeURIComponent(code)}`;
 			let response = await fetch(url, {
@@ -264,15 +264,15 @@
 		if (!bankCode || !branchCode || branchCode.length < 3) return null;
 
 		try {
-			const apiKey = PUBLIC_BANKCODEJP_API_KEY || '';
-			if (!apiKey) {
-				console.error(
-					'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
-				);
-				return null;
-			}
+		const apiKey = env.PUBLIC_BANKCODEJP_API_KEY || '';
+		if (!apiKey) {
+			console.error(
+				'APIキーが設定されていません。.envファイルにPUBLIC_BANKCODEJP_API_KEYを設定してください。'
+			);
+			return null;
+		}
 
-			// v3の支店個別取得APIを使用（/v3/banks/{bankCode}/branches/{branchCode}）
+		// v3の支店個別取得APIを使用（/v3/banks/{bankCode}/branches/{branchCode}）
 			// まず個別取得APIを試す
 			let url = `https://apis.bankcode-jp.com/v3/banks/${encodeURIComponent(bankCode)}/branches/${encodeURIComponent(branchCode)}`;
 			let response = await fetch(url, {

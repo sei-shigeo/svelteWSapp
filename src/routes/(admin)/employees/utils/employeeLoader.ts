@@ -1,16 +1,27 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from '@sveltejs/kit';
 import type { Employee } from '../types';
+
+/**
+ * ページローダーの引数型（共有ユーティリティ用）
+ */
+type LoadEvent = {
+	params: { id?: string };
+	fetch: typeof globalThis.fetch;
+};
 
 /**
  * 従業員IDから従業員データを取得する共通ローダー関数
  *
  * @param params - ページパラメータ（idを含む）
+ * @param fetch - SvelteKitのfetch関数
  * @returns 従業員データを含むオブジェクト
  * @throws 404エラー - 従業員が見つからない場合、またはIDが無効な場合
  * @throws 500エラー - サーバーエラーが発生した場合
  */
-export async function loadEmployee(params: { id?: string }): Promise<{ employee: Employee }> {
+export async function loadEmployee(
+	params: { id?: string },
+	fetch: typeof globalThis.fetch
+): Promise<{ employee: Employee }> {
 	if (!params.id) {
 		throw error(404, 'Employee not found');
 	}
@@ -38,8 +49,8 @@ export async function loadEmployee(params: { id?: string }): Promise<{ employee:
 /**
  * SvelteKitのPageLoad関数として使用するラッパー
  *
- * @returns PageLoad関数
+ * @returns PageLoad互換のローダー関数
  */
-export const createEmployeeLoader = (): PageLoad => {
-	return async ({ params }) => loadEmployee(params);
+export const createEmployeeLoader = () => {
+	return async ({ params, fetch }: LoadEvent) => loadEmployee(params, fetch);
 };

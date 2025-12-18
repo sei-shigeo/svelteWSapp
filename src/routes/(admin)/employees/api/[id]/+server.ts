@@ -89,10 +89,9 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 		const dbData = convertToDbFormat(body);
 
 		// undefinedでないフィールドのみ更新
-		Object.keys(dbData).forEach((key) => {
-			const value = dbData[key as keyof typeof dbData];
+		Object.entries(dbData).forEach(([key, value]) => {
 			if (value !== undefined) {
-				updateData[key as keyof typeof updateData] = value;
+				(updateData as Record<string, unknown>)[key] = value;
 			}
 		});
 

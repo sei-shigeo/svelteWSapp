@@ -1,4 +1,4 @@
-import { json, error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { employee } from '$lib/server/db/schema';
@@ -68,19 +68,19 @@ export const POST: RequestHandler = async ({ request }) => {
 			return json({ error: codeError }, { status: 400 });
 		}
 
-		// 従業員コードの重複チェック
+		// 従業員コードの重複チェック（バリデーション済みなのでcode存在確定）
 		const existingEmployee = await db
 			.select()
 			.from(employee)
-			.where(eq(employee.code, body.code))
+			.where(eq(employee.code, body.code!))
 			.limit(1);
 
 		if (existingEmployee.length > 0) {
 			return json({ error: 'Employee code already exists' }, { status: 409 });
 		}
 
-		// データベース形式に変換して挿入
-		const dbData = convertToDbFormat(body);
+		// データベース形式に変換して挿入（バリデーション済みなので必須フィールド存在確定）
+		const dbData = convertToDbFormat(body) as typeof employee.$inferInsert;
 		const result = await db.insert(employee).values(dbData).returning();
 
 		if (result.length === 0) {
